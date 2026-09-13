@@ -67,3 +67,21 @@ test('renderer preserves the same instance buffers, images and physical pieces t
  assert(batches.every(batch=>batch.visible));
  view.dispose();
 });
+
+
+test('arrival releases puzzle resources while preserving the same destination and allowing replay',()=>{
+ const tiles=new Map([...CONTENT,'key'].map(id=>[id,canvas()]));
+ const make=()=>createMontageRenderer({THREE:{...THREE,WebGLRenderer:Renderer},mount:{replaceChildren(){}},artwork:{tiles},onLost(){},onInvalidate(){}});
+ let view=make();const t=createEntranceTimeline();t.ready();const locked=t.step(14700);
+ view.draw(locked,false);
+ const world=scene.children.find(o=>o.isGroup),batches=scene.children.filter(o=>o.geometry?.isInstancedBufferGeometry);
+ let disposed=0;batches.forEach(o=>o.geometry.addEventListener('dispose',()=>disposed++));
+ const arrival={...locked,state:'arrived',phaseProgress:1,portal:1,destination:1};
+ view.draw(arrival,false);
+ assert(scene.children.includes(world));assert.equal(disposed,3);
+ assert.equal(scene.children.filter(o=>o.geometry?.isInstancedBufferGeometry).length,0);
+ view.draw(arrival,false);assert.equal(disposed,3,'resizing/redrawing must not recreate the entrance');
+ view.dispose();view=make();view.draw(t.step(0),false);
+ assert.equal(scene.children.filter(o=>o.geometry?.isInstancedBufferGeometry).length,3);
+ view.dispose();
+});

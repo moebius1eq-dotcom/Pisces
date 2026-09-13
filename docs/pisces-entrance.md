@@ -1,6 +1,10 @@
 # PISCES entrance: cinematic jigsaw universe
 
-Scope: the entrance ends at **PISCES / PIECE TOGETHER THE UNIVERSE**. There is no homepage/pass-through transition. The existing Cosmos Explorer Journey, camera controls, navigation and atlas remain available at their existing URLs.
+Scope: the approved entrance continues through its completed puzzle into a minimal PISCES environment. This proves the physical passage; it is not the full homepage. The existing Cosmos Explorer Journey, camera controls, navigation and atlas remain available at their existing URLs.
+
+## Approved entrance and passage checkpoint
+
+The visually approved entrance is committed at `b6eb4e4`, tagged `pisces-approved-entrance-2026-09-13`, and pushed. The remote README rename to Pisces was merged as `25a78e5`. The passage changes remain local for review.
 
 ## Recovery and local review
 
@@ -32,7 +36,7 @@ The ready-at-start film lasts **14.7 seconds**. Camera position and viewing targ
 - The standard tier adds 2,200 mid-distance jigsaw silhouettes and 16,000 distant masked impostors. Both populations animate in their vertex shaders. These are bounded seeded populations, not unique meshes or millions of objects.
 - Smaller screens and lower reported memory/core counts start at 850 mid-distance and 4,500 distant pieces with a smaller texture atlas. Sustained slow frame intervals reduce pixel ratio. The population is selected once at startup and remains intact throughout the film.
 - A padded shared atlas holds the 29 astronomy studies. Physical colors remain readable independently of a dark environment. Each piece samples its own complete image or diagram throughout the flight and assembly. There are no shared-photo crops across neighboring pieces.
-- No per-frame image generation, particle bloom or expensive post-processing. The entrance pauses while hidden and at the readiness hold, then stops drawing after the final identity. The preserved Journey does not render behind it.
+- No per-frame image generation, particle bloom or expensive post-processing. The entrance pauses while hidden and at the readiness hold, then stops drawing after arrival. Puzzle geometry, materials and GPU textures are released at arrival; CPU artwork canvases are retained so replay can rebuild the entrance. The preserved Journey does not render behind it.
 
 The layer density and camera scale are artistic compositions, not an astronomical distance model. Device performance still needs local browser review; population counts are not an FPS claim.
 
@@ -46,7 +50,7 @@ The existing `window.cosmosAssetsReady` signal still combines Earth/Moon surface
 
 Failed or stalled images retain populated schematic content. The existing 15-second deadline selects a real fallback; late image callbacks are ignored. Drawing/update exceptions and disposal cannot leave image readiness pending. A failed WebGL setup, shader compilation or context loss selects Canvas 2D. That version retains recognizable jigsaw clipping, depth sorting, camera motion, the central region and 180 cheaper distant pieces, each retained with its own adjoining target.
 
-Reduced motion uses a stable, fully framed assembled puzzle with its center absent until readiness, then displays the identity without travel or flips. Status is exposed to assistive technology without visible loading copy. Replay retains asset readiness. The finished reveal never automatically opens a new homepage.
+Reduced motion uses a stable, framed puzzle until readiness, then a 1.2-second threshold opening and spatial dissolve reveals the destination without the long camera traversal. Status is exposed to assistive technology without visible loading copy. Replay retains asset readiness. The finished identity continues into the same Three.js scene. No page reload or route swap occurs.
 
 ## Imagery and credits
 
@@ -56,14 +60,26 @@ Exact source pages, original image URLs, credits and processing notes are in [as
 
 ## Validation
 
-Run `node --test tests/entrance.test.mjs tests/entrance-timing.test.mjs tests/entrance-camera.test.mjs tests/entrance-continuity.test.mjs tests/entrance-renderer.test.mjs`.
+Run `node --test tests/entrance.test.mjs tests/entrance-timing.test.mjs tests/entrance-camera.test.mjs tests/entrance-continuity.test.mjs tests/entrance-renderer.test.mjs tests/entrance-transition.test.mjs`.
 
-39 checks cover actual complementary contour seams, contour integrity, complete assembly, the central gap, finite transforms, reproducible field depth, camera continuity and framing, the complete film duration, real-readiness gating, reduced motion and replay. Syntax checks cover every entrance module. Geometry was also constructed against the local Three.js version, and camera projection was sampled without a browser. Artwork contract checks exercised all 29 synchronous canvases, 20 image requests, successful decode, failure, disposal, and throwing draw/update callbacks.
+44 checks cover actual complementary contour seams, contour integrity, complete assembly, the central gap, finite transforms, reproducible field depth, camera continuity and framing, the complete film duration, real-readiness gating, reduced motion and replay. Syntax checks cover every entrance module. Geometry was also constructed against the local Three.js version, and camera projection was sampled without a browser. Artwork contract checks exercised all 29 synchronous canvases, 20 image requests, successful decode, failure, disposal, and throwing draw/update callbacks.
 
-A fresh browser visual/GPU check remains for local review. The previously denied browser preview has not been retried or bypassed.
+A fresh browser visual/GPU check remains blocked: the explicitly requested preview reload was rejected by Browser Security because a saved localhost permission blocks access. No alternate browser route was attempted. User visual review is still required.
 
 ## Continuity architecture
 
 Every record has a persistent ID, assigned content, origin, rotation, scale, final slot and target. The render batches and per-instance texture coordinates are allocated once. GPU trajectories interpolate those records along cluster-coordinated arcs; the same objects become the assembled structure. The outer slots are ordered expanding lattice rings with an asymmetric boundary. A shared shallow surface deformation preserves matching seams while giving the object depth. Only the post-lock identity response dims the artwork.
 
 The regression tests verify unique slots across both complete density tiers, edge connectivity, unchanged instance buffers/content through assembly, a visible near-camera key during the readiness hold, and continuous trajectories. The renderer test constructs real Three.js scene geometry and substitutes only the GPU endpoint; it does not claim shader compilation or browser visual verification.
+
+## Physical passage milestone
+
+The approved 14.7-second film remains. A slight inward-flow cue now begins during the last portion of the scale pullback; foreground hero studies stay brighter while assembled distant pieces recede. The missing socket is more clearly outlined. Images remain dimly visible behind the generated identity so the object retains physical form.
+
+`entrance-transition.js` wraps the existing readiness-gated film and adds a 2.6-second threshold approach, 1.8-second passage, and 1.6-second arrival (about 20.7 seconds total when assets are ready). The final piece hinges around its left edge, opening the actual central jigsaw slot. The camera advances from its identity viewpoint to z=4, crosses the structure to z=-32, then settles at z=-90. There is no CSS scaling of the puzzle, page navigation, or scene replacement. Reduced motion uses a short reveal at a fixed viewpoint.
+
+`pisces-world.js` creates the destination in that same scene from the start: 550/1,200 stars, a faint procedural dust lane, a shaded planetary limb and no additional downloaded textures. The Canvas fallback supplies a cheaper equivalent. `entrance.js` handles replay, the minimal accessible arrival anchor and stopping animation. `entrance-renderer.js` retains the destination when it releases all puzzle resources after arrival. The atlas and identity staging canvases are also shrunk; cached study canvases remain for replay. A fresh renderer rebuilds the entrance only when replay is explicitly requested.
+
+Performance compromises: the fallback uses affine piece projection and a cheaper painted destination; reduced motion uses an opening/dissolve rather than camera travel; density is selected at startup and pixel ratio can decrease under load. The stationary destination performs no continuing animation loop. No measured browser FPS claim is made.
+
+The tests cover readiness before entry, frame-time carry, camera position continuity through the threshold, plane crossing, reduced motion, resource disposal, preservation of the same destination group, and replay reconstruction. No Learn, Explore, Opportunities, cards, new navigation, educational content or full homepage layout is included.

@@ -77,14 +77,14 @@ export function fragmentPose(fragment, state, reduced = false) {
   if (fragment.id === 'key') {
     const t = smooth(state.finalPiece), approach = smooth(state.convergence);
     const holding = [mix(10, 2.8, approach), mix(-3, -.8, approach), mix(-14, 7, approach)];
-    const visible = !reduced || state.state === 'locked';
+    const visible = !reduced || state.finalPiece === 1;
     return { position: [holding[0] * (1 - t), holding[1] * (1 - t) + .48 * Math.sin(t * Math.PI),
       holding[2] * (1 - t) + .08 * t * (1 - state.seat)],
       rotation: [.25 * (1 - t), -.65 * (1 - t), -.4 * (1 - t)], scale: 1,
       opacity: visible ? 1 : 0, wave: 0 };
   }
   if (reduced) return { position: [...center, 0], rotation: [0, 0, 0], scale: 1, opacity: 1, wave: 0 };
-  const flow = state.state === 'convergence' ? state.phaseProgress : state.convergence;
+  const flow = assemblyProgress(state);
   const t = smooth((flow - assemblyDelay(fragment.center)) / .72), time = state.filmTime || 0;
   const wave = Math.sin(Math.PI * state.resonance) * Math.exp(-(((state.resonance * 31 - Math.hypot(...center)) / 3) ** 2));
   const position = [0, 1, 2].map(axis => mix(station[axis], axis < 2 ? center[axis] : 0, t)
@@ -136,4 +136,12 @@ export function createField(count, far = false, startSlot = far ? 2200 : 0) {
       scale: far ? .25 + rng() * .7 : .55 + rng() * 1.2, seed: rng(),
       content: CONTENT[(slot.x * 9 + slot.y * 13 + CONTENT.length * 1000) % CONTENT.length] };
   });
+}
+
+// A small directional cue starts while the camera is still pulling back. This
+// makes convergence legible without adding another long shot to the approved film.
+export function assemblyProgress(state) {
+  if(state.state==='scale-reveal')return .08*smooth((state.phaseProgress-.65)/.35);
+  if(state.state==='convergence')return .08+.92*state.phaseProgress;
+  return state.convergence;
 }

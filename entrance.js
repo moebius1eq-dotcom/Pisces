@@ -1,4 +1,4 @@
-import { createEntranceTimeline } from './entrance-timing.js';
+import { createExperienceTimeline } from './entrance-transition.js';
 import { createMontageArtwork } from './entrance-artwork.js';
 import { createMontageRenderer, createCanvasMontage } from './entrance-renderer.js';
 
@@ -6,8 +6,9 @@ const entrance = document.querySelector('.pisces-entrance');
 const mount = entrance.querySelector('.entrance-scene');
 const status = entrance.querySelector('.entrance-status');
 const replay = entrance.querySelector('.entrance-replay');
+const arrival = entrance.querySelector('.pisces-arrival');
 const reduced = matchMedia('(prefers-reduced-motion: reduce)');
-const timeline = createEntranceTimeline();
+const timeline = createExperienceTimeline();
 const journeyTitle = document.title;
 document.title = 'PISCES — Piece together the universe';
 const background = [...document.querySelectorAll('.site-header, #scale-index, main')];
@@ -18,18 +19,17 @@ let frame = 0, previous = 0, dismissed = false, lastState = 'mystery';
 let snapshot, presentation, readyResult, graphicsFallback = false;
 const artwork = createMontageArtwork({ onUpdate(id) { presentation?.update(id); requestFrame(); } });
 const canvasFallback = () => createCanvasMontage({ mount, artwork, onInvalidate: requestFrame });
-try {
-  const THREE = await import('./vendor/three.module.js');
-  presentation = createMontageRenderer({ THREE, mount, artwork, onInvalidate: requestFrame,
-    onLost() {
-      presentation.dispose(); graphicsFallback = true; presentation = canvasFallback();
-      requestFrame();
-    },
-  });
-} catch {
-  graphicsFallback = true;
-  presentation = canvasFallback();
+let three;
+try { three=await import('./vendor/three.module.js'); } catch { graphicsFallback=true; }
+function buildPresentation() {
+  graphicsFallback=!three;
+  try {
+    if (!three) return canvasFallback();
+    return createMontageRenderer({THREE:three,mount,artwork,onInvalidate:requestFrame,
+      onLost(){presentation.dispose();graphicsFallback=true;presentation=canvasFallback();requestFrame();}});
+  } catch { graphicsFallback=true; return canvasFallback(); }
 }
+presentation=buildPresentation();
 
 function tick(now) {
   frame = 0;
@@ -39,17 +39,19 @@ function tick(now) {
   snapshot = timeline.step(delta, reduced.matches);
   presentation.draw(snapshot, reduced.matches);
   entrance.dataset.state = snapshot.state;
-  if (snapshot.state === 'locked' && lastState !== 'locked') {
+  if (snapshot.state === 'arrived' && lastState !== 'arrived') {
     entrance.setAttribute('aria-busy', 'false');
     status.textContent = readyResult?.fallback || graphicsFallback
-      ? 'PISCES. Piece together the universe. Ready with simplified graphics.'
-      : 'PISCES. Piece together the universe. Ready.';
+      ? 'Arrived inside PISCES. Simplified graphics. Replay entrance is available.'
+      : 'Arrived inside PISCES. Replay entrance is available.';
     replay.hidden = false;
     replay.setAttribute('aria-disabled', 'false');
   }
+  arrival.hidden = snapshot.state !== 'arrival' && snapshot.state !== 'arrived';
+  arrival.style.opacity = snapshot.destination || 0;
   lastState = snapshot.state;
-  // The finished identity remains here. There is no pass-through or automatic exit.
-  if (!reduced.matches && snapshot.state !== 'locked' && snapshot.state !== 'awaiting') requestFrame();
+  // The destination rests after arrival; no expensive continuous background loop.
+  if (snapshot.state !== 'arrived' && snapshot.state !== 'awaiting') requestFrame();
 }
 function requestFrame() {
   if (!frame && !dismissed && !document.hidden) frame = requestAnimationFrame(tick);
@@ -71,7 +73,9 @@ function dismissForJourney() {
 const journeyHash = () => /^#(departure|earth-system|inner-solar-system|solar-system|stellar-neighborhood|milky-way|local-group|cosmic-web|observable-universe|flight=)/.test(location.hash);
 replay.addEventListener('click', () => {
   if (replay.getAttribute('aria-disabled') === 'true') return;
+  presentation.dispose(); presentation=buildPresentation();
   timeline.reset(); lastState = 'mystery'; previous = 0;
+  arrival.hidden=true;
   entrance.dataset.state = 'mystery'; entrance.setAttribute('aria-busy', 'true');
   replay.setAttribute('aria-disabled', 'true');
   status.textContent = 'Replaying the PISCES entrance.';

@@ -3,11 +3,11 @@ precision highp float;
 uniform float uConvergence, uTime, uAcceleration, uBrand, uReveal, uResonance, uPopulation, uFieldReveal;
 uniform vec2 uBoardCenter;
 uniform vec4 uRect;
-uniform float uOpacity;
+uniform float uOpacity, uProminence;
 varying vec2 vArtUv, vWordUv, vMaskUv;
 varying vec3 vNormal;
 varying vec4 vRect;
-varying float vDepth, vOpacity, vWave, vFace;
+varying float vDepth, vOpacity, vWave, vFace, vProminence;
 #ifdef POPULATION
 attribute vec3 aOrigin, aTarget, aTurn;
 attribute vec4 aMeta, aRect;
@@ -42,12 +42,12 @@ void main() {
   p.z-=.0015*(bend.x*bend.x+.6*bend.y*bend.y)*t;
   vWordUv=(aTarget.xy+position.xy+vec2(24.8,13.6))/vec2(49.6,27.2);
   vArtUv=imageUv;
-  vRect=aRect; vWave=wave;
+  vRect=aRect; vWave=wave; vProminence=aMeta.w;
   vOpacity=uFieldReveal;
   #else
   vWordUv=(uBoardCenter+position.xy+vec2(24.8,13.6))/vec2(49.6,27.2);
   vArtUv=imageUv;
-  vRect=uRect; vOpacity=uOpacity; vWave=0.;
+  vRect=uRect; vOpacity=uOpacity; vWave=0.; vProminence=uProminence;
   #endif
   vec4 view=modelViewMatrix*vec4(p,1.);
   vDepth=-view.z;
@@ -59,11 +59,11 @@ void main() {
 export const pieceFragment = `
 precision highp float;
 uniform sampler2D uAtlas, uIdentity, uMask;
-uniform float uBrand, uReveal, uPopulation, uResonance;
+uniform float uBrand, uReveal, uPopulation, uResonance, uConvergence, uPortal, uReducedExit;
 varying vec2 vArtUv, vWordUv, vMaskUv;
 varying vec3 vNormal;
 varying vec4 vRect;
-varying float vDepth, vOpacity, vWave, vFace;
+varying float vDepth, vOpacity, vWave, vFace, vProminence;
 void main() {
   float alpha=vOpacity*uReveal;
   #ifdef IMPOSTOR
@@ -80,13 +80,17 @@ void main() {
   vec3 n=normalize(vNormal);
   float face=vFace;
   float lighting=.86+.27*max(0.,dot(n,normalize(vec3(-.35,.6,1.))));
-  vec3 image=study.rgb*lighting;
+  vec3 image=study.rgb*lighting*mix(1.,vProminence,uConvergence);
   // Shallow physical edges catch the key light. Front imagery stays luminous.
   if(face<.25) image=mix(vec3(.10,.14,.17),vec3(.45,.54,.59),max(0.,dot(n,normalize(vec3(-.5,.7,1.)))));
   float exposure=1.+vWave*.32;
   float fog=uPopulation>.5 ? mix(.42,1.,exp(-max(0.,vDepth-45.)*.006)) : 1.;
-  vec3 rgb=mix(image*exposure*fog,word.rgb,resolve);
-  alpha*=mix(1.,word.a,resolve);
+  // The identity illuminates the same surface. Dim astronomy remains on its
+  // surroundings so the viewer still sees a physical threshold to enter.
+  float ink=resolve*word.a;
+  vec3 dimmed=image*exposure*fog*mix(1.,.22,resolve*(1.-uPortal*.6));
+  vec3 rgb=mix(dimmed,word.rgb,ink*(1.-uPortal));
+  alpha*=1.-uReducedExit;
 
   if(alpha<.008) discard;
   gl_FragColor=vec4(rgb,alpha);

@@ -1,5 +1,7 @@
 import { fragments, fragmentPose, puzzleOutline, CELL, compositionBounds as bounds, createField, surfaceDepth } from './entrance-model.js';
 import { cameraPose } from './entrance-camera.js';
+import { passageCamera } from './entrance-transition.js';
+import { createCanvasDestination } from './pisces-world.js';
 import { createIdentity } from './entrance-textures.js';
 
 const clamp = value => Math.max(0, Math.min(1, value));
@@ -47,7 +49,8 @@ export function createCanvasMontage({ mount, artwork, onInvalidate = () => {} })
   if (!context) throw new Error('A Canvas 2D context is required for the PISCES fallback.');
   canvas.setAttribute('aria-hidden', 'true');
   mount.replaceChildren(canvas);
-  const path = outlinePath(), identity = createIdentity(), field = createField(180, true);
+  const path = outlinePath(), identity = createIdentity(), field = createField(180, true, 0);
+  const destination=createCanvasDestination();
   let alive = true, width = 1, height = 1, density = 1;
 
   function resize() {
@@ -94,9 +97,9 @@ export function createCanvasMontage({ mount, artwork, onInvalidate = () => {} })
     context.restore();
   }
 
-  function paint(face, brand, reveal) {
+  function paint(face, brand, reveal, portal) {
     const { piece, pose, facing, size } = face;
-    const alpha = pose.opacity * reveal, imageAlpha = alpha * (1 - brand);
+    const alpha = pose.opacity * reveal, imageAlpha = alpha * (1 - .78 * brand * (1 - portal * .6));
     if (alpha <= .005) return;
     if (imageAlpha > .005) {
       setFaceTransform(face, face.back.x - face.center.x, face.back.y - face.center.y);
@@ -124,7 +127,7 @@ export function createCanvasMontage({ mount, artwork, onInvalidate = () => {} })
       }
     }
     if (brand > 0 && piece.center) {
-      context.globalAlpha = alpha * brand;
+      context.globalAlpha = alpha * brand * (1 - portal);
       context.scale(1, -1);
       context.drawImage(identity.canvas, bounds.left - piece.center[0], piece.center[1] - bounds.top,
         bounds.right - bounds.left, bounds.top - bounds.bottom);
@@ -144,19 +147,23 @@ export function createCanvasMontage({ mount, artwork, onInvalidate = () => {} })
     context.setTransform(1, 0, 0, 1, 0, 0);
     context.globalAlpha = 1;
     context.fillStyle = '#020405'; context.fillRect(0, 0, canvas.width, canvas.height);
-    const view = cameraPose(state, width / height, reduced), project = projector(view, width, height);
+    const view = passageCamera(state,cameraPose(state, width / height, reduced),reduced), project = projector(view, width, height);
     const brand = Number.isFinite(state.brand) ? clamp(state.brand) : 0;
     const reveal = reduced ? 1 : Number.isFinite(state.reveal) ? clamp(state.reveal) : 1;
+    context.setTransform(density,0,0,density,0,0);
+    destination.draw(context,project,width,height);
+    if(state.state==='arrived')return;
     const faces = [];
     const convergence = ease(state.convergence || 0);
     for (const piece of [...field, ...fragments]) {
       const pose = fragmentPose(piece, state, reduced);
+      if(piece.id==='key'&&state.portal){const angle=state.portal*1.8;pose.position=[-.8+.8*Math.cos(angle),0,-.8*Math.sin(angle)];pose.rotation=[0,angle,0];}
       pose.position[2] += surfaceDepth(...piece.center) * convergence;
       const projected = face(piece, pose, project, view);
       if (projected) faces.push(projected);
     }
     faces.sort((a, b) => b.center.depth - a.center.depth);
-    for (const entry of faces) paint(entry, entry.piece.center ? brand : 0, reveal);
+    for (const entry of faces) paint(entry, entry.piece.center ? brand : 0, reveal*(1-(state.reducedExit||0)),state.portal||0);
     context.globalAlpha = 1;
   }
 
@@ -171,7 +178,7 @@ export function createCanvasMontage({ mount, artwork, onInvalidate = () => {} })
     draw,
     dispose() {
       if (!alive) return;
-      alive = false; field.length = 0;
+      alive = false; field.length = 0; destination.dispose();
       canvas.remove(); canvas.width = 1; canvas.height = 1;
       identity.canvas.width = 1; identity.canvas.height = 1;
     },

@@ -1,7 +1,9 @@
-import { fragments, fragmentPose, puzzleOutline, createField, CELL, compositionBounds as bounds } from './entrance-model.js';
+import { fragments, fragmentPose, puzzleOutline, createField, CELL, assemblyProgress, compositionBounds as bounds } from './entrance-model.js';
 import { cameraPose } from './entrance-camera.js';
 import { createIdentity, createArtworkAtlas, createPuzzleMask } from './entrance-textures.js';
 import { pieceVertex, pieceFragment } from './entrance-shaders.js';
+import { passageCamera } from './entrance-transition.js';
+import { createDestinationWorld } from './pisces-world.js';
 export { createCanvasMontage } from './entrance-fallback.js';
 
 export function createMontageRenderer({ THREE, mount, artwork, onLost, onInvalidate }) {
@@ -12,6 +14,8 @@ export function createMontageRenderer({ THREE, mount, artwork, onLost, onInvalid
   renderer.domElement.setAttribute('aria-hidden', 'true'); mount.replaceChildren(renderer.domElement);
   const scene = new THREE.Scene(), camera = new THREE.PerspectiveCamera(48, 1, .12, 600);
   const resources = [], population = [], heroes = [];
+  const destination = createDestinationWorld({THREE,scene,small});
+  let released = false;
   let alive = true, dpr = small ? 1.15 : 1.5, lastFrame = 0, slow = 0, samples = 0, degraded = false;
   const atlas = createArtworkAtlas(artwork, small ? 256 : 512), identity = createIdentity();
   const texture = (canvas, srgb = true) => {
@@ -24,11 +28,11 @@ export function createMontageRenderer({ THREE, mount, artwork, onLost, onInvalid
   const common = {
     uAtlas: { value: atlasMap }, uIdentity: { value: identityMap }, uMask: { value: maskMap },
     uConvergence: { value: 0 }, uTime: { value: 0 }, uAcceleration: { value: 0 },
-    uBrand: { value: 0 }, uReveal: { value: 0 }, uResonance: { value: 0 }, uFieldReveal: { value: 0 },
+    uBrand: { value: 0 }, uReveal: { value: 0 }, uResonance: { value: 0 }, uFieldReveal: { value: 0 }, uPortal: { value: 0 }, uReducedExit: { value: 0 },
   };
   function material(defines = {}, overrides = {}) {
     const result = new THREE.ShaderMaterial({ defines, uniforms: { ...common,
-      uPopulation: { value: 0 }, uOpacity: { value: 1 },
+      uPopulation: { value: 0 }, uProminence: { value: 1 }, uOpacity: { value: 1 },
       uRect: { value: new THREE.Vector4(...atlas.rect('earth')) },
       uBoardCenter: { value: new THREE.Vector2() }, ...overrides },
       vertexShader: pieceVertex, fragmentShader: pieceFragment,
@@ -60,7 +64,7 @@ export function createMontageRenderer({ THREE, mount, artwork, onLost, onInvalid
     vectorAttribute(geometry, 'aOrigin', items.flatMap(p => p.station || p.position), 3);
     vectorAttribute(geometry, 'aTarget', items.flatMap(p => p.center ? [...p.center, 0] : p.target), 3);
     vectorAttribute(geometry, 'aTurn', items.flatMap(p => p.turn), 3);
-    vectorAttribute(geometry, 'aMeta', items.flatMap(p => [p.scale, p.seed, p.index, 0]), 4);
+    vectorAttribute(geometry, 'aMeta', items.flatMap(p => [p.scale, p.seed, p.index, field ? .35 + p.seed * .18 : .62 + p.seed * .16]), 4);
     vectorAttribute(geometry, 'aRect', items.flatMap(p => atlas.rect(p.content)), 4);
     geometry.instanceCount = items.length;
     const mat = material({ POPULATION: 1, ...(distant ? { IMPOSTOR: 1 } : {}) }, { uPopulation: { value: field ? 1 : 0 } });
@@ -91,28 +95,42 @@ export function createMontageRenderer({ THREE, mount, artwork, onLost, onInvalid
   const lost = event => { event.preventDefault(); if (alive) onLost(); };
   renderer.domElement.addEventListener('webglcontextlost', lost);
   renderer.debug.onShaderError = () => { queueMicrotask(() => { if (alive) onLost(); }); };
-  document.fonts.ready.then(() => { if (alive) { identity.paint(); identityMap.needsUpdate = true; onInvalidate(); } });
+  document.fonts.ready.then(() => { if (alive && !released) { identity.paint(); identityMap.needsUpdate = true; onInvalidate(); } });
   return {
     resize,
-    update(id) { atlas.update(id); atlasMap.needsUpdate = true; },
+    update(id) { if (!released) { atlas.update(id); atlasMap.needsUpdate = true; } },
     draw(state, reduced) {
-      const shot = cameraPose(state, camera.aspect, reduced);
+      const shot = passageCamera(state, cameraPose(state, camera.aspect, reduced), reduced);
       camera.fov = shot.fov; camera.position.set(...shot.position); camera.lookAt(...shot.target); camera.rotateZ(shot.roll);
       camera.updateProjectionMatrix();
-      common.uConvergence.value = reduced ? 1 : state.state === 'convergence' ? state.phaseProgress : state.convergence;
+      common.uConvergence.value = reduced ? 1 : assemblyProgress(state);
       common.uTime.value = reduced ? 0 : state.filmTime;
       common.uAcceleration.value = state.acceleration;
+      common.uPortal.value = state.portal || 0;
+      common.uReducedExit.value = state.reducedExit || 0;
       common.uBrand.value = state.brand; common.uReveal.value = state.reveal;
       common.uResonance.value = reduced ? 0 : state.resonance;
       common.uFieldReveal.value = reduced ? 1 : .07 + .93 * state.discovery;
       for (const { fragment, mesh, material: mat } of heroes) {
         const pose = fragmentPose(fragment, state, reduced);
         mesh.position.set(...pose.position); mesh.rotation.set(...pose.rotation); mesh.scale.setScalar(pose.scale);
+        if (fragment.id === 'key' && state.portal) {
+          const angle=state.portal*1.8;
+          mesh.position.set(-.8+.8*Math.cos(angle),0,-.8*Math.sin(angle));
+          mesh.rotation.set(0,angle,0);
+        }
         mesh.visible = pose.opacity > .001;
         mat.uniforms.uOpacity.value = pose.opacity;
       }
-      for (const item of population) item.mesh.visible = state.brand < 1 || !item.field;
-      socketMaterial.opacity = .6 * state.silence * (1 - state.seat) * (1 - state.brand);
+      for (const item of population) item.mesh.visible = !released;
+      socketMaterial.opacity = .85 * state.silence * (1 - state.seat) * (1 - state.brand);
+      if (!released && state.state === 'arrived') {
+        released=true;
+        heroes.forEach(p=>scene.remove(p.mesh)); population.forEach(p=>scene.remove(p.mesh)); scene.remove(socketLine);
+        for (const resource of new Set(resources)) resource.dispose();
+        resources.length=0;
+        atlas.canvas.width=atlas.canvas.height=1;identity.canvas.width=identity.canvas.height=1;
+      }
       renderer.render(scene, camera);
       // Downgrade sustained slow presentation, without changing choreography.
       const now = performance.now();
@@ -132,7 +150,7 @@ export function createMontageRenderer({ THREE, mount, artwork, onLost, onInvalid
       renderer.domElement.removeEventListener('webglcontextlost', lost);
       // Shared base attributes are disposed once after population buffers.
       for (const resource of new Set(resources)) resource.dispose();
-      renderer.dispose(); renderer.domElement.remove();
+      destination.dispose(); renderer.dispose(); renderer.domElement.remove();
     },
   };
 }
