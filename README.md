@@ -1,4 +1,4 @@
-# Cosmos Explorer
+# Pisces
 
 ## PISCES entrance — local review milestone
 
