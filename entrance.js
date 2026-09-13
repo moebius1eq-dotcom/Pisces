@@ -14,14 +14,13 @@ const background = [...document.querySelectorAll('.site-header, #scale-index, ma
 const priorInert = background.map(element => element.inert);
 background.forEach(element => { element.inert = true; });
 
-let frame = 0, previous = 0, dismissed = false, lastState = 'discovery';
+let frame = 0, previous = 0, dismissed = false, lastState = 'mystery';
 let snapshot, presentation, readyResult, graphicsFallback = false;
-const pointer = { x: 0, y: 0, targetX: 0, targetY: 0 };
 const artwork = createMontageArtwork({ onUpdate(id) { presentation?.update(id); requestFrame(); } });
 const canvasFallback = () => createCanvasMontage({ mount, artwork, onInvalidate: requestFrame });
 try {
   const THREE = await import('./vendor/three.module.js');
-  presentation = createMontageRenderer({ THREE, mount, artwork, pointer, onInvalidate: requestFrame,
+  presentation = createMontageRenderer({ THREE, mount, artwork, onInvalidate: requestFrame,
     onLost() {
       presentation.dispose(); graphicsFallback = true; presentation = canvasFallback();
       requestFrame();
@@ -38,8 +37,6 @@ function tick(now) {
   const delta = previous ? Math.min(now - previous, 50) : 0;
   previous = now;
   snapshot = timeline.step(delta, reduced.matches);
-  pointer.x += (pointer.targetX - pointer.x) * .07;
-  pointer.y += (pointer.targetY - pointer.y) * .07;
   presentation.draw(snapshot, reduced.matches);
   entrance.dataset.state = snapshot.state;
   if (snapshot.state === 'locked' && lastState !== 'locked') {
@@ -74,18 +71,12 @@ function dismissForJourney() {
 const journeyHash = () => /^#(departure|earth-system|inner-solar-system|solar-system|stellar-neighborhood|milky-way|local-group|cosmic-web|observable-universe|flight=)/.test(location.hash);
 replay.addEventListener('click', () => {
   if (replay.getAttribute('aria-disabled') === 'true') return;
-  timeline.reset(); lastState = 'discovery'; previous = 0;
-  entrance.dataset.state = 'discovery'; entrance.setAttribute('aria-busy', 'true');
+  timeline.reset(); lastState = 'mystery'; previous = 0;
+  entrance.dataset.state = 'mystery'; entrance.setAttribute('aria-busy', 'true');
   replay.setAttribute('aria-disabled', 'true');
   status.textContent = 'Replaying the PISCES entrance.';
   requestFrame();
 });
-entrance.addEventListener('pointermove', event => {
-  if (reduced.matches || event.pointerType === 'touch' || lastState === 'locked') return;
-  pointer.targetX = event.clientX / Math.max(1, innerWidth) * 2 - 1;
-  pointer.targetY = 1 - event.clientY / Math.max(1, innerHeight) * 2;
-  requestFrame();
-}, { passive: true });
 document.addEventListener('visibilitychange', () => {
   cancelAnimationFrame(frame); frame = 0; previous = 0;
   if (!document.hidden) requestFrame();

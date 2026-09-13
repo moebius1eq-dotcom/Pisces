@@ -4,12 +4,15 @@ const SIZE = 512;
 const INK = '#e1e7e8';
 const BLUE = '#8eb6ce';
 const GOLD = '#d6b782';
-const IDS = ['earth', 'moon', 'saturn', 'jupiter', 'mars', 'coordinates', 'sphere', 'orbit', 'parallax', 'spectrum', 'stars', 'solar', 'galaxy', 'geometry', 'key'];
+const IDS = ['earth', 'moon', 'saturn', 'jupiter', 'mars', 'coordinates', 'sphere', 'orbit', 'parallax', 'spectrum', 'stars', 'solar', 'galaxy', 'geometry', 'key', 'nebula', 'blackhole', 'telescope', 'cosmicweb'];
 
 export const CONTENT_CREDITS = [
   'Earth and Moon: the existing locally stored NASA-derived globe assets.',
   'Saturn, Jupiter and Mars: existing NASA imagery; source URLs in assets/atlas-sources.json.',
-  'Coordinate grids, orbital geometry, spectra, galaxy and star studies: original schematic illustrations; not observed datasets.'
+  'Crab Nebula: NASA, ESA. Whirlpool Galaxy: NASA, ESA, S. Beckwith (STScI), and The Hubble Heritage Team (STScI/AURA).',
+  'Sun: NASA/SDO. Hubble telescope: NASA. Black-hole visualization: NASA’s Goddard Space Flight Center/Jeremy Schnittman.',
+  'Exact image origins, dates, transformations and media-use references: assets/entrance-sources.json.',
+  'Coordinate grids, orbital geometry, spectra, cosmic web and fallback studies: original schematic illustrations; not observed datasets.'
 ];
 
 function random(seed) {
@@ -46,7 +49,7 @@ function disc(c, x, y, r, color = INK) {
 function backdrop(c, id) {
   c.clearRect(0, 0, SIZE, SIZE);
   c.fillStyle = '#080c10'; c.fillRect(0, 0, SIZE, SIZE);
-  const warm = ['solar', 'jupiter', 'mars', 'saturn', 'galaxy', 'spectrum'].includes(id);
+  const warm = ['solar', 'jupiter', 'mars', 'saturn', 'galaxy', 'spectrum', 'nebula', 'blackhole'].includes(id);
   const g = c.createRadialGradient(270, 240, 15, 270, 240, 410);
   g.addColorStop(0, warm ? '#25221e' : '#15242e');
   g.addColorStop(1, '#080c10');
@@ -204,6 +207,97 @@ function geometry(c) {
   label(c, 'ANGLE → DISTANCE', 28, 484, 15, '#b4c8d3');
 }
 
+function nebulaStudy(c) {
+  const rng = random(1349);
+  for (let i = 0; i < 75; i++) {
+    const angle = rng() * Math.PI * 2, radius = 30 + rng() * 173;
+    const x = 256 + Math.cos(angle) * radius, y = 276 + Math.sin(angle) * radius * 0.9;
+    const glow = c.createRadialGradient(x, y, 1, x, y, 35 + rng() * 56);
+    glow.addColorStop(0, i % 3 ? 'rgba(163,130,90,0.19)' : 'rgba(130,164,178,0.19)');
+    glow.addColorStop(1, 'rgba(9,14,19,0)');
+    c.fillStyle = glow; c.fillRect(0, 0, SIZE, SIZE);
+    c.strokeStyle = i % 3 ? 'rgba(225,193,144,0.26)' : 'rgba(172,199,210,0.28)';
+    c.lineWidth = 1 + rng() * 1.4; c.beginPath();
+    c.moveTo(250 + (rng() - 0.5) * 56, 268 + (rng() - 0.5) * 54);
+    c.bezierCurveTo(x + 39, 220, x - 26, 349, x, y); c.stroke();
+  }
+  starStudy(c, 823, 26);
+  label(c, 'NEBULAR STRUCTURE', 26, 42, 16);
+  label(c, 'SCHEMATIC', 26, 477, 12, '#b7c4cc');
+}
+
+function blackHoleStudy(c) {
+  starStudy(c, 995, 25);
+  c.save(); c.translate(256, 280); c.rotate(-0.16);
+  for (let i = 0; i < 28; i++) {
+    ellipse(c, 0, 0, 96 + i * 5.3, 32 + i * 1.45, 0,
+      `rgba(224,${163 + i},${103 + i},${0.18 + (i % 4) * 0.07})`, 2.7);
+  }
+  disc(c, 0, 0, 66, '#070a0d');
+  c.strokeStyle = '#d0af7b'; c.lineWidth = 4.5; c.beginPath();
+  c.ellipse(0, 0, 73, 71, 0, Math.PI, Math.PI * 2); c.stroke();
+  ellipse(c, 0, 0, 62, 63, 0, '#91724c', 1.5);
+  c.restore();
+  label(c, 'LIGHT / GRAVITY', 26, 42, 16);
+  label(c, 'SCHEMATIC', 26, 477, 12, '#b7c4cc');
+}
+
+function telescopeStudy(c) {
+  starStudy(c, 177, 30);
+  c.save(); c.translate(256, 256); c.rotate(-0.46);
+  // Optical bench and segmented solar arrays: an instrument study, not an
+  // undocumented engineering plan or a copy of mission CAD geometry.
+  c.fillStyle = '#69859a'; c.fillRect(-183, -76, 128, 147); c.fillRect(55, -76, 128, 147);
+  for (let k = 0; k < 6; k++) {
+    line(c, [[-181 + k * 25, -76], [-181 + k * 25, 71]], '#273c4c', 2);
+    line(c, [[57 + k * 25, -76], [57 + k * 25, 71]], '#273c4c', 2);
+  }
+  for (let k = 0; k < 6; k++) {
+    line(c, [[-183, -74 + k * 29], [-55, -74 + k * 29]], '#293c4a', 1.6);
+    line(c, [[55, -74 + k * 29], [183, -74 + k * 29]], '#293c4a', 1.6);
+  }
+  line(c, [[-197, 0], [197, 0]], '#c8d3d8', 3);
+  const metal = c.createLinearGradient(-48, 0, 48, 0);
+  metal.addColorStop(0, '#758087'); metal.addColorStop(0.45, '#d9dfe1'); metal.addColorStop(1, '#67717a');
+  c.fillStyle = metal; c.fillRect(-47, -159, 94, 319);
+  ellipse(c, 0, -159, 47, 20, 0, '#e8e5d8', 3);
+  ellipse(c, 0, -159, 36, 13, 0, '#303943', 8);
+  for (const y of [-110, -47, 38, 122]) line(c, [[-47, y], [47, y]], '#8b959c', 2);
+  c.restore();
+  label(c, 'THE ACT OF OBSERVING', 26, 42, 16);
+  label(c, 'INSTRUMENT STUDY', 26, 477, 12, '#b7c4cc');
+}
+
+function cosmicWebStudy(c) {
+  const rng = random(529);
+  const nodes = Array.from({ length: 33 }, () => [rng() * 574 - 31, rng() * 557 - 25]);
+  const edges = new Set();
+  for (let i = 0; i < nodes.length; i++) {
+    const a = nodes[i];
+    const closest = nodes.map((b, j) => ({ j, d: Math.hypot(a[0] - b[0], a[1] - b[1]) }))
+      .filter(p => p.j !== i).sort((a, b) => a.d - b.d).slice(0, 2);
+    for (const { j } of closest) {
+      const key = `${Math.min(i, j)}:${Math.max(i, j)}`;
+      if (edges.has(key)) continue; edges.add(key);
+      const b = nodes[j], bend = (rng() - 0.5) * 64;
+      for (let strand = 0; strand < 5; strand++) {
+        c.strokeStyle = strand === 2 ? 'rgba(187,207,215,0.48)' : 'rgba(113,156,178,0.12)';
+        c.lineWidth = strand === 2 ? 1.4 : 4.5; c.beginPath();
+        c.moveTo(a[0], a[1]);
+        c.bezierCurveTo(a[0] * 0.7 + b[0] * 0.3 + bend, a[1] * 0.7 + b[1] * 0.3 + strand * 2,
+          a[0] * 0.3 + b[0] * 0.7 - bend, a[1] * 0.3 + b[1] * 0.7 - strand * 2, b[0], b[1]);
+        c.stroke();
+      }
+    }
+    const glow = c.createRadialGradient(a[0], a[1], 0, a[0], a[1], 9 + rng() * 17);
+    glow.addColorStop(0, 'rgba(215,222,223,0.73)'); glow.addColorStop(0.21, 'rgba(155,182,195,0.30)');
+    glow.addColorStop(1, 'rgba(110,153,176,0)');
+    c.fillStyle = glow; c.fillRect(a[0] - 27, a[1] - 27, 54, 54);
+  }
+  label(c, 'COSMIC WEB', 26, 42, 16);
+  label(c, 'STRUCTURE / SCHEMATIC', 26, 477, 12, '#b7c4cc');
+}
+
 function planetFallback(c, id) {
   const warm = ['saturn', 'jupiter', 'mars'].includes(id);
   const color = id === 'moon' ? '#b7bdbe' : warm ? '#c4a178' : '#739eaf';
@@ -231,17 +325,24 @@ function fallback(c, id) {
   else if (id === 'solar') solar(c);
   else if (id === 'galaxy') galaxy(c);
   else if (id === 'geometry') geometry(c);
+  else if (id === 'nebula') nebulaStudy(c);
+  else if (id === 'blackhole') blackHoleStudy(c);
+  else if (id === 'telescope') telescopeStudy(c);
+  else if (id === 'cosmicweb') cosmicWebStudy(c);
   else planetFallback(c, id);
 }
 
 function paintPhoto(c, image, id) {
   backdrop(c, id);
-  const enlarged = id === 'key' ? 1.55 : id === 'earth' || id === 'moon' ? 1.14 : 1;
+  const enlarged = id === 'key' ? 1.55 : id === 'earth' || id === 'moon' ? 1.14
+    : id === 'solar' ? 1.13 : id === 'nebula' ? 1.09 : id === 'blackhole' ? 1.3 : 1;
   const scale = Math.max(SIZE / image.naturalWidth, SIZE / image.naturalHeight) * enlarged;
   const w = image.naturalWidth * scale, h = image.naturalHeight * scale;
   const x = (SIZE - w) * 0.5 + (id === 'key' ? 99 : id === 'earth' ? 22 : 0);
   const y = (SIZE - h) * 0.5 + (id === 'key' ? 79 : 10);
-  c.save(); c.filter = 'brightness(1.24) contrast(1.04)'; c.drawImage(image, x, y, w, h); c.restore();
+  c.save();
+  c.filter = id === 'blackhole' ? 'brightness(1.08) saturate(0.8)' : 'brightness(1.18) contrast(1.04)';
+  c.drawImage(image, x, y, w, h); c.restore();
   // The atlas sources include their own black sky; white measurement marks and
   // a photographic crop make each fragment legible while it is moving.
   const shade = c.createLinearGradient(0, 0, 0, 140);
@@ -253,8 +354,15 @@ function paintPhoto(c, image, id) {
     ellipse(c, 251, 273, 191, 88, -0.3, '#d6c8a8', 1.6);
     line(c, [[29, 339], [139, 281], [315, 189], [489, 99]], 'rgba(227,235,238,0.7)', 1.1);
   } else {
-    label(c, id.toUpperCase(), 27, 42, 18);
-    label(c, id === 'earth' ? 'BLUE MARBLE' : id === 'moon' ? 'LUNAR SURFACE' : 'PLANETARY STUDY', 27, 66, 11, '#b7c6d0');
+    const captions = {
+      earth: ['EARTH', 'BLUE MARBLE'], moon: ['MOON', 'LUNAR SURFACE'],
+      solar: ['THE SUN', 'SDO / EXTREME ULTRAVIOLET'], galaxy: ['WHIRLPOOL', 'M51 / HUBBLE'],
+      nebula: ['CRAB NEBULA', 'VISIBLE LIGHT / HUBBLE'], blackhole: ['BLACK HOLE', 'NASA / VISUALIZATION'],
+      telescope: ['HUBBLE', 'OBSERVING FROM ORBIT']
+    };
+    const [title, note] = captions[id] || [id.toUpperCase(), 'PLANETARY STUDY'];
+    label(c, title, 27, 42, 18);
+    label(c, note, 27, 66, 11, '#b7c6d0');
     for (let i = 0; i < 11; i++) line(c, [[28 + i * 17, 476], [28 + i * 17, i % 5 ? 480 : 486]], '#b6cbd5', 1);
   }
 }
@@ -274,11 +382,16 @@ export function createMontageArtwork({ onUpdate = () => {} } = {}) {
     fallback(canvas.getContext('2d'), id); tiles.set(id, canvas);
   }
   const sources = [
-    ['assets/atlas-earth.png', ['earth', 'key']],
-    ['assets/atlas-moon.png', ['moon']],
+    ['assets/entrance-earth.webp', ['earth', 'key']],
+    ['assets/entrance-moon.webp', ['moon']],
     ['assets/atlas-saturn.jpg', ['saturn']],
     ['assets/atlas-jupiter.jpg', ['jupiter']],
-    ['assets/atlas-mars.jpg', ['mars']]
+    ['assets/atlas-mars.jpg', ['mars']],
+    ['assets/entrance-nebula.webp', ['nebula']],
+    ['assets/entrance-solar.webp', ['solar']],
+    ['assets/entrance-galaxy.webp', ['galaxy']],
+    ['assets/entrance-blackhole.webp', ['blackhole']],
+    ['assets/entrance-telescope.webp', ['telescope']]
   ];
   const jobs = sources.map(([src, ids]) => new Promise(resolve => {
     const image = new Image();

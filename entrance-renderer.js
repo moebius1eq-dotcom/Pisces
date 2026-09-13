@@ -1,189 +1,142 @@
-import { fragments, compositionBounds as bounds, fragmentPose, smooth } from './entrance-model.js';
+import { fragments, fragmentPose, puzzleOutline, createField, CELL, compositionBounds as bounds } from './entrance-model.js';
+import { cameraPose } from './entrance-camera.js';
+import { createIdentity, createArtworkAtlas, createPuzzleMask } from './entrance-textures.js';
+import { pieceVertex, pieceFragment } from './entrance-shaders.js';
+export { createCanvasMontage } from './entrance-fallback.js';
 
-const width = bounds.right - bounds.left, height = bounds.top - bounds.bottom;
-const connections = [['earth', 'coordinates'], ['moon', 'orbit'], ['saturn', 'sphere'],
-  ['spectrum', 'stars'], ['geometry', 'parallax']];
-
-function identityCanvas() {
-  const canvas = document.createElement('canvas');
-  canvas.width = 2048; canvas.height = 1024;
-  const ctx = canvas.getContext('2d');
-  function text(value, size, spacing, y, color) {
-    ctx.font = `300 ${size}px Inter, Arial, sans-serif`;
-    ctx.fillStyle = color;
-    ctx.textBaseline = 'middle';
-    const letters = [...value], sizes = letters.map(letter => ctx.measureText(letter).width);
-    let x = (canvas.width - sizes.reduce((a, b) => a + b, 0) - spacing * (letters.length - 1)) / 2;
-    letters.forEach((letter, i) => { ctx.fillText(letter, x, y); x += sizes[i] + spacing; });
-  }
-  const paint = () => {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    text('PISCES', 300, 57, 435, '#eef0e9');
-    text('PIECE TOGETHER THE UNIVERSE', 54, 8, 654, '#b4c2c8');
-  };
-  paint();
-  return { canvas, paint };
-}
-
-export function createMontageRenderer({ THREE, mount, artwork, pointer, onLost, onInvalidate }) {
+export function createMontageRenderer({ THREE, mount, artwork, onLost, onInvalidate }) {
+  const small = innerWidth < 700 || (navigator.deviceMemory && navigator.deviceMemory <= 4)
+    || (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4);
   const renderer = new THREE.WebGLRenderer({ alpha: false, antialias: true, powerPreference: 'low-power' });
-  renderer.setClearColor(0x020405);
-  renderer.outputColorSpace = THREE.SRGBColorSpace;
-  renderer.domElement.setAttribute('aria-hidden', 'true');
-  mount.append(renderer.domElement);
-  const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(38, 1, .1, 70);
-  const group = new THREE.Group(); scene.add(group);
-  const identity = identityCanvas();
-  const identityMap = new THREE.CanvasTexture(identity.canvas);
-  identityMap.colorSpace = THREE.SRGBColorSpace;
-  const resources = [identityMap], maps = new Map(), poses = new Map();
-  let alive = true, distance = 13;
-  const pieces = fragments.map(fragment => {
-    const geometry = new THREE.BufferGeometry();
-    geometry.setAttribute('position', new THREE.Float32BufferAttribute(fragment.points.flatMap(([x, y]) => [x - fragment.center[0], y - fragment.center[1], 0]), 3));
-    geometry.setAttribute('uv', new THREE.Float32BufferAttribute([0, 0, 1, 0, 1, 1, 0, 1], 2));
-    geometry.setAttribute('identityUv', new THREE.Float32BufferAttribute(fragment.points.flatMap(([x, y]) => [(x - bounds.left) / width, (y - bounds.bottom) / height]), 2));
-    geometry.setIndex([0, 1, 2, 0, 2, 3]);
-    const map = new THREE.CanvasTexture(artwork.tiles.get(fragment.id));
-    map.colorSpace = THREE.SRGBColorSpace;
-    map.anisotropy = Math.min(4, renderer.capabilities.getMaxAnisotropy());
-    maps.set(fragment.id, map);
-    const xs = fragment.points.map(p => p[0]), ys = fragment.points.map(p => p[1]);
-    const aspect = (Math.max(...xs) - Math.min(...xs)) / (Math.max(...ys) - Math.min(...ys));
-    const material = new THREE.ShaderMaterial({
-      side: THREE.DoubleSide, transparent: true, depthWrite: false,
-      uniforms: { art: { value: map }, identity: { value: identityMap }, brand: { value: 0 },
-        opacity: { value: 0 }, aspect: { value: aspect }, response: { value: 0 } },
-      vertexShader: `attribute vec2 identityUv;
-        varying vec2 imageUv; varying vec2 wordUv;
-        void main(){ imageUv=uv; wordUv=identityUv;
-          gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.); }`,
-      fragmentShader: `uniform sampler2D art; uniform sampler2D identity;
-        uniform float brand; uniform float opacity; uniform float aspect; uniform float response;
-        varying vec2 imageUv; varying vec2 wordUv;
-        void main(){
-          vec2 crop=imageUv;
-          if(aspect>1.) crop.y=(crop.y-.5)/aspect+.5;
-          else crop.x=(crop.x-.5)*aspect+.5;
-          vec4 study=texture2D(art,crop);
-          vec4 word=texture2D(identity,wordUv);
-          float front=gl_FrontFacing?1.:.62;
-          vec3 image=study.rgb*front*(1.+response*.22);
-          vec3 rgb=mix(image,word.rgb,brand);
-          float alpha=mix(1.,word.a,brand)*opacity;
-          gl_FragColor=vec4(rgb,alpha);
-          #include <colorspace_fragment>
-        }`,
-    });
-    const mesh = new THREE.Mesh(geometry, material);
-    group.add(mesh);
-    resources.push(geometry, material, map);
-    return { fragment, mesh, material };
-  });
-  const links = connections.map(([from, to]) => {
-    const geometry = new THREE.BufferGeometry();
-    geometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(6), 3));
-    const material = new THREE.LineBasicMaterial({ color: 0xc4d2d7, transparent: true, opacity: 0, depthWrite: false });
-    const line = new THREE.Line(geometry, material); group.add(line);
-    resources.push(geometry, material);
-    return { from, to, geometry, material };
-  });
-  const hole = fragments.find(fragment => fragment.id === 'key');
-  const holeGeometry = new THREE.BufferGeometry().setFromPoints(hole.points.map(([x, y]) => new THREE.Vector3(x, y, -.015)));
-  const holeMaterial = new THREE.LineBasicMaterial({ color: 0xd3ddd7, transparent: true, opacity: 0 });
-  group.add(new THREE.LineLoop(holeGeometry, holeMaterial)); resources.push(holeGeometry, holeMaterial);
+  renderer.setClearColor(0x020405); renderer.outputColorSpace = THREE.SRGBColorSpace;
+  renderer.domElement.setAttribute('aria-hidden', 'true'); mount.replaceChildren(renderer.domElement);
+  const scene = new THREE.Scene(), camera = new THREE.PerspectiveCamera(48, 1, .12, 600);
+  const resources = [], population = [], heroes = [];
+  let alive = true, dpr = small ? 1.15 : 1.5, lastFrame = 0, slow = 0, samples = 0, degraded = false;
+  const atlas = createArtworkAtlas(artwork, small ? 256 : 512), identity = createIdentity();
+  const texture = (canvas, srgb = true) => {
+    const map = new THREE.CanvasTexture(canvas);
+    if (srgb) map.colorSpace = THREE.SRGBColorSpace;
+    map.anisotropy = Math.min(small ? 2 : 4, renderer.capabilities.getMaxAnisotropy());
+    resources.push(map); return map;
+  };
+  const atlasMap = texture(atlas.canvas), identityMap = texture(identity.canvas), maskMap = texture(createPuzzleMask(), false);
+  const common = {
+    uAtlas: { value: atlasMap }, uIdentity: { value: identityMap }, uMask: { value: maskMap },
+    uConvergence: { value: 0 }, uTime: { value: 0 }, uAcceleration: { value: 0 },
+    uBrand: { value: 0 }, uReveal: { value: 0 }, uResonance: { value: 0 }, uFieldReveal: { value: 0 },
+  };
+  function material(defines = {}, overrides = {}) {
+    const result = new THREE.ShaderMaterial({ defines, uniforms: { ...common,
+      uPopulation: { value: 0 }, uOpacity: { value: 1 },
+      uRect: { value: new THREE.Vector4(...atlas.rect('earth')) }, uPatch: { value: new THREE.Vector4(0, 0, 1, 1) },
+      uBoardCenter: { value: new THREE.Vector2() }, ...overrides },
+      vertexShader: pieceVertex, fragmentShader: pieceFragment,
+      side: THREE.DoubleSide, transparent: true, depthWrite: true });
+    resources.push(result); return result;
+  }
+  function shape(samples) {
+    const result = new THREE.Shape();
+    puzzleOutline(samples).forEach(([x, y], i) => i ? result.lineTo(x, y) : result.moveTo(x, y));
+    result.closePath(); return result;
+  }
+  // Hero pieces are actual beveled solids. All share the same geometry and image atlas.
+  const solid = new THREE.ExtrudeGeometry(shape(5), { depth: .11, bevelEnabled: true,
+    bevelThickness: .012, bevelSize: .014, bevelSegments: 1, steps: 1, curveSegments: 1 });
+  solid.translate(0, 0, -.055); resources.push(solid);
+  const flat = new THREE.ShapeGeometry(shape(3)); resources.push(flat);
+  const impostor = new THREE.PlaneGeometry(CELL * 1.6, CELL * 1.6); resources.push(impostor);
+  for (const fragment of fragments.filter(f => f.hero >= 0 || f.id === 'key')) {
+    const patch = fragment.hero >= 18 && fragment.hero <= 20
+      ? [ (fragment.hero - 18) / 3, 1 / 3, 1 / 3, 1 / 3 ] : [0, 0, 1, 1];
+    const mat = material({}, { uRect: { value: new THREE.Vector4(...atlas.rect(fragment.content)) },
+      uPatch: { value: new THREE.Vector4(...patch) }, uBoardCenter: { value: new THREE.Vector2(...fragment.center) } });
+    const mesh = new THREE.Mesh(solid, mat); scene.add(mesh); heroes.push({ fragment, mesh, material: mat });
+  }
+  const vectorAttribute = (geometry, name, values, size) => geometry.setAttribute(name,
+    new THREE.InstancedBufferAttribute(new Float32Array(values), size));
+  function makePopulation(items, base, distant = false, field = false) {
+    const geometry = new THREE.InstancedBufferGeometry();
+    geometry.index = base.index;
+    for (const [name, attribute] of Object.entries(base.attributes)) geometry.setAttribute(name, attribute);
+    vectorAttribute(geometry, 'aOrigin', items.flatMap(p => p.station || p.position), 3);
+    vectorAttribute(geometry, 'aTarget', items.flatMap(p => p.center ? [...p.center, 0] : p.target), 3);
+    vectorAttribute(geometry, 'aTurn', items.flatMap(p => p.turn), 3);
+    vectorAttribute(geometry, 'aMeta', items.flatMap(p => [p.scale, p.seed, p.index, 0]), 4);
+    vectorAttribute(geometry, 'aRect', items.flatMap(p => atlas.rect(p.content)), 4);
+    vectorAttribute(geometry, 'aPatch', items.flatMap(p => !field
+      ? [p.column % 3 / 3, p.row % 3 / 3, 1 / 3, 1 / 3] : [0, 0, 1, 1]), 4);
+    geometry.instanceCount = items.length;
+    const mat = material({ POPULATION: 1, ...(distant ? { IMPOSTOR: 1 } : {}) }, { uPopulation: { value: field ? 1 : 0 } });
+    if (field) mat.depthWrite = false;
+    const mesh = new THREE.Mesh(geometry, mat);
+    // Shader travel exceeds the untransformed base geometry's bounding sphere.
+    mesh.frustumCulled = false;
+    scene.add(mesh); resources.push(geometry);
+    const result = { mesh, geometry, material: mat, max: items.length, field };
+    population.push(result); return result;
+  }
+  makePopulation(fragments.filter(f => f.hero < 0 && f.id !== 'key'), flat);
+  const middle = makePopulation(createField(small ? 850 : 2200), flat, false, true);
+  const distant = makePopulation(createField(small ? 4500 : 16000, true), impostor, true, true);
+
+  // A real open socket remains during silence and the asset-readiness hold.
+  const socket = new THREE.BufferGeometry().setFromPoints(puzzleOutline(5).map(([x, y]) => new THREE.Vector3(x, y, -.07)));
+  const socketMaterial = new THREE.LineBasicMaterial({ color: 0xa9c1cb, transparent: true, opacity: 0, depthWrite: false });
+  const socketLine = new THREE.LineLoop(socket, socketMaterial); scene.add(socketLine); resources.push(socket, socketMaterial);
 
   function resize() {
-    renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
+    renderer.setPixelRatio(Math.min(devicePixelRatio || 1, dpr));
     renderer.setSize(Math.max(1, innerWidth), Math.max(1, innerHeight));
-    camera.aspect = innerWidth / Math.max(1, innerHeight);
-    distance = Math.max(12.4, 10.6 / (2 * Math.tan(19 * Math.PI / 180) * camera.aspect));
-    camera.updateProjectionMatrix();
+    camera.aspect = innerWidth / Math.max(1, innerHeight); camera.updateProjectionMatrix();
   }
   resize();
-  const lost = event => { event.preventDefault(); onLost(); };
+  const lost = event => { event.preventDefault(); if (alive) onLost(); };
   renderer.domElement.addEventListener('webglcontextlost', lost);
-  document.fonts.ready.then(() => {
-    if (!alive) return;
-    identity.paint(); identityMap.needsUpdate = true; onInvalidate();
-  });
+  renderer.debug.onShaderError = () => { queueMicrotask(() => { if (alive) onLost(); }); };
+  document.fonts.ready.then(() => { if (alive) { identity.paint(); identityMap.needsUpdate = true; onInvalidate(); } });
   return {
     resize,
-    update(id) { const map = maps.get(id); if (map) map.needsUpdate = true; },
+    update(id) { atlas.update(id); atlasMap.needsUpdate = true; },
     draw(state, reduced) {
-      const settle = smooth(state.convergence), motion = reduced ? 0 : 1 - settle;
-      group.rotation.set(.09 * motion, -.13 * motion, -.035 * motion);
-      camera.position.set(pointer.x * .20 * motion, pointer.y * .12 * motion, distance - .8 * state.assembly * motion);
-      camera.lookAt(0, 0, 0);
-      pieces.forEach(({ fragment, mesh, material }) => {
-        const pose = fragmentPose(fragment, state, reduced); poses.set(fragment.id, pose);
+      const shot = cameraPose(state, camera.aspect, reduced);
+      camera.fov = shot.fov; camera.position.set(...shot.position); camera.lookAt(...shot.target); camera.rotateZ(shot.roll);
+      camera.updateProjectionMatrix();
+      common.uConvergence.value = reduced ? 1 : state.convergence;
+      common.uTime.value = reduced ? 0 : state.filmTime;
+      common.uAcceleration.value = state.acceleration;
+      common.uBrand.value = state.brand; common.uReveal.value = state.reveal;
+      common.uResonance.value = reduced ? 0 : state.resonance;
+      common.uFieldReveal.value = reduced ? 1 : .07 + .93 * state.discovery;
+      for (const { fragment, mesh, material: mat } of heroes) {
+        const pose = fragmentPose(fragment, state, reduced);
         mesh.position.set(...pose.position); mesh.rotation.set(...pose.rotation); mesh.scale.setScalar(pose.scale);
         mesh.visible = pose.opacity > .001;
-        material.uniforms.opacity.value = pose.opacity;
-        material.uniforms.brand.value = state.brand;
-        material.uniforms.response.value = pose.wave;
-      });
-      links.forEach(({ from, to, geometry, material }, i) => {
-        const a = poses.get(from), b = poses.get(to);
-        const t = smooth((state.assembly - i * .08) / .16) * (1 - smooth((state.assembly - .55 - i * .045) / .25));
-        material.opacity = .28 * t * Math.min(a.opacity, b.opacity) * (1 - state.convergence);
-        const array = geometry.attributes.position.array;
-        array.set(a.position, 0); array.set(b.position, 3); array[2] -= .02; array[5] -= .02;
-        geometry.attributes.position.needsUpdate = true;
-      });
-      holeMaterial.opacity = .40 * smooth((state.convergence - .6) / .4) * (1 - state.seat) * (1 - state.brand);
+        mat.uniforms.uOpacity.value = pose.opacity;
+      }
+      for (const item of population) item.mesh.visible = !item.field || (!reduced && state.convergence < .98 && state.brand === 0);
+      socketMaterial.opacity = .6 * state.silence * (1 - state.seat) * (1 - state.brand);
       renderer.render(scene, camera);
+      // Downgrade sustained slow presentation, without changing choreography.
+      const now = performance.now();
+      if (lastFrame && !reduced && state.state !== 'awaiting' && state.state !== 'locked') {
+        const interval = now - lastFrame;
+        if (interval < 150) { samples++; slow += interval > 27 ? 1 : 0; }
+        if (!degraded && samples >= 45 && slow / samples > .45) {
+          degraded = true; dpr = 1;
+          middle.geometry.instanceCount = Math.floor(middle.max * .55);
+          distant.geometry.instanceCount = Math.floor(distant.max * .5);
+          resize();
+        }
+      }
+      lastFrame = now;
     },
     dispose() {
-      alive = false;
+      if (!alive) return; alive = false;
       renderer.domElement.removeEventListener('webglcontextlost', lost);
-      resources.forEach(resource => resource.dispose());
+      // Shared base attributes are disposed once after population buffers.
+      for (const resource of new Set(resources)) resource.dispose();
       renderer.dispose(); renderer.domElement.remove();
     },
-  };
-}
-
-export function createCanvasMontage({ mount, artwork, onInvalidate }) {
-  const canvas = document.createElement('canvas');
-  canvas.setAttribute('aria-hidden', 'true'); mount.replaceChildren(canvas);
-  const ctx = canvas.getContext('2d');
-  const identity = identityCanvas();
-  let alive = true, ratio = 1, scale = 1;
-  function resize() {
-    ratio = Math.min(devicePixelRatio, 1.5);
-    canvas.width = Math.max(1, Math.round(innerWidth * ratio));
-    canvas.height = Math.max(1, Math.round(innerHeight * ratio));
-    scale = Math.min(innerWidth / 10.6, innerHeight / 7.8);
-  }
-  resize();
-  document.fonts.ready.then(() => { if (alive) { identity.paint(); onInvalidate(); } });
-  return {
-    resize, update() {},
-    draw(state, reduced) {
-      ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
-      ctx.fillStyle = '#020405'; ctx.fillRect(0, 0, innerWidth, innerHeight);
-      const poses = fragments.map(fragment => ({ fragment, pose: fragmentPose(fragment, state, reduced) }))
-        .sort((a, b) => a.pose.position[2] - b.pose.position[2]);
-      for (const { fragment, pose } of poses) {
-        if (pose.opacity <= .001) continue;
-        const perspective = 13 / (13 - pose.position[2]);
-        ctx.save();
-        ctx.translate(innerWidth / 2 + pose.position[0] * scale * perspective, innerHeight / 2 - pose.position[1] * scale * perspective);
-        ctx.rotate(-pose.rotation[2]);
-        ctx.scale(scale * perspective * pose.scale * Math.max(.025, Math.abs(Math.cos(pose.rotation[1]))), scale * perspective * pose.scale);
-        const local = fragment.points.map(([x, y]) => [x - fragment.center[0], -(y - fragment.center[1])]);
-        ctx.beginPath(); local.forEach(([x, y], i) => i ? ctx.lineTo(x, y) : ctx.moveTo(x, y)); ctx.closePath(); ctx.clip();
-        const xs = local.map(p => p[0]), ys = local.map(p => p[1]);
-        const left = Math.min(...xs), top = Math.min(...ys), w = Math.max(...xs) - left, h = Math.max(...ys) - top;
-        const size = Math.max(w, h);
-        ctx.globalAlpha = pose.opacity * (1 - state.brand);
-        ctx.drawImage(artwork.tiles.get(fragment.id), left + (w - size) / 2, top + (h - size) / 2, size, size);
-        ctx.globalAlpha = pose.opacity * state.brand;
-        ctx.drawImage(identity.canvas, bounds.left - fragment.center[0], -bounds.top + fragment.center[1], width, height);
-        ctx.restore();
-      }
-    },
-    dispose() { alive = false; canvas.remove(); },
   };
 }

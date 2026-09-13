@@ -1,15 +1,35 @@
-const PHASES = ['discovery', 'assembly', 'convergence', 'awaiting', 'final-piece', 'seating', 'settling', 'identity', 'locked'];
-const DURATION = { discovery: 1800, assembly: 3600, convergence: 2200, 'final-piece': 1050, seating: 180, settling: 650, identity: 1400 };
+const PHASES = [
+  'mystery', 'discovery', 'acceleration', 'scale-reveal', 'convergence',
+  'silence', 'awaiting', 'final-piece', 'seating', 'settling', 'identity', 'locked',
+];
+const DURATION = {
+  mystery: 1400,
+  discovery: 1800,
+  acceleration: 1900,
+  'scale-reveal': 1700,
+  convergence: 2000,
+  silence: 700,
+  'final-piece': 1400,
+  seating: 130,
+  settling: 470,
+  identity: 1800,
+};
 const clamp = value => Math.max(0, Math.min(1, value));
 const ease = value => {
   const t = clamp(value);
   return t * t * t * (t * (6 * t - 15) + 10);
 };
+const PHASE_START = {};
+let runningTime = 0;
+for (const phase of PHASES) {
+  PHASE_START[phase] = runningTime;
+  runningTime += DURATION[phase] || 0;
+}
 
-// Procedural previews may assemble while resources load. Only ready() releases
-// the central piece; visible time never substitutes for that readiness signal.
+// The directed shots can run while assets load. The silence ends at a real
+// readiness gate: waiting never substitutes for the ready() signal.
 export function createEntranceTimeline() {
-  let elapsed = 0, phaseElapsed = 0, resourcesReady = false, state = 'discovery';
+  let elapsed = 0, phaseElapsed = 0, resourcesReady = false, state = 'mystery';
 
   function snapshot() {
     const index = PHASES.indexOf(state);
@@ -22,16 +42,25 @@ export function createEntranceTimeline() {
     return {
       state,
       elapsed,
+      phaseProgress: state === 'locked' ? 1 : DURATION[state] ? clamp(phaseElapsed / DURATION[state]) : 0,
+      // Camera time excludes loading holds and stops at the final identity.
+      filmTime: (PHASE_START[state] + phaseElapsed) / 1000,
+      mystery: progress('mystery'),
       discovery: progress('discovery'),
-      // Equal-time intervals gather progressively more of the montage.
-      assembly: progress('assembly', t => t * t),
+      acceleration: progress('acceleration'),
+      scaleReveal: progress('scale-reveal'),
       convergence: progress('convergence'),
+      silence: progress('silence'),
       finalPiece: progress('final-piece'),
       seat: progress('seating'),
       resonance: progress('settling', t => t),
       brand: progress('identity'),
-      reveal: state === 'discovery' ? ease(phaseElapsed / 500) : 1,
+      reveal: state === 'mystery' ? ease(phaseElapsed / 350) : 1,
     };
+  }
+
+  function consumeTime(delta) {
+    elapsed = Math.min(Number.MAX_SAFE_INTEGER, elapsed + delta);
   }
 
   return {
@@ -39,7 +68,7 @@ export function createEntranceTimeline() {
     reset() {
       elapsed = 0;
       phaseElapsed = 0;
-      state = 'discovery';
+      state = 'mystery';
     },
     step(delta, reduced = false) {
       if (state === 'locked') return snapshot();
@@ -50,12 +79,12 @@ export function createEntranceTimeline() {
         if (state === 'locked') return snapshot();
       }
 
-      // Carry excess delta through exact boundaries. An unresolved gate
-      // consumes visible waiting time; a final lock consumes no further time.
+      // Carry excess delta through exact boundaries. A waiting gate consumes
+      // visible elapsed time only; a final lock consumes no additional time.
       while (state !== 'locked') {
         if (state === 'awaiting') {
           if (!resourcesReady) {
-            elapsed += remaining;
+            consumeTime(remaining);
             break;
           }
           state = 'final-piece';
@@ -63,7 +92,7 @@ export function createEntranceTimeline() {
         const duration = DURATION[state];
         const consumed = Math.min(remaining, duration - phaseElapsed);
         phaseElapsed += consumed;
-        elapsed += consumed;
+        consumeTime(consumed);
         remaining -= consumed;
         if (phaseElapsed < duration) break;
         state = PHASES[PHASES.indexOf(state) + 1];

@@ -2,7 +2,7 @@
 
 ## PISCES entrance — local review milestone
 
-The homepage previews a kinetic montage of planetary imagery and astronomy diagrams assembling into the PISCES identity. It holds after revealing **PISCES / PIECE TOGETHER THE UNIVERSE**. The pass-through transition and new homepage are intentionally not implemented yet. Reload the homepage or use **Replay entrance** to review it. The preserved Journey remains reachable at `index.html#departure`; atlas URLs are unchanged. See [entrance notes](docs/pisces-entrance.md) for readiness, sources, fallbacks and local checks.
+The homepage previews a 13.3-second camera flight through a deep universe of astronomy-filled jigsaw pieces: close encounters, a dramatic pullback revealing thousands of pieces, convergence, and one final missing piece. The assembled imagery resolves into **PISCES / PIECE TOGETHER THE UNIVERSE** and holds there. Reload the homepage or use **Replay entrance** to review it locally. The preserved Journey remains reachable at `index.html#departure`; atlas URLs are unchanged. See [entrance notes](docs/pisces-entrance.md) for the storyboard, adaptive rendering, readiness, fallbacks and checks, and [image credits](assets/entrance-sources.json) for locally hosted NASA imagery. The homepage/pass-through phase has not been implemented.
 
 Pre-PISCES recovery: annotated tag `pre-pisces-2026-09-12`, branch `codex/pre-pisces`, commit `bc5c693`.
 

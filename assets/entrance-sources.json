@@ -1,0 +1,94 @@
+{
+  "purpose": "Locally hosted astronomy imagery for the PISCES entrance. No external image requests are made by the running site.",
+  "mediaUse": {
+    "reference": "https://www.nasa.gov/nasa-brand-center/images-and-media/",
+    "basis": "NASA's media guidelines permit educational and informational use of NASA content, including graphical simulations and Internet pages, with acknowledgement and without implying endorsement. The selected source pages identify the credits below and do not mark these images as third-party copyright-restricted content.",
+    "notes": "Credits remain attached to the images here. NASA logos and people are not used as brand elements. Telescope imagery is an editorial depiction of the observatory. Composite and non-visible-wavelength imagery retain the source processing; the black-hole image is explicitly a visualization, not a photograph."
+  },
+  "assets": [
+    {
+      "ids": ["earth", "key"],
+      "file": "assets/entrance-earth.webp",
+      "title": "Earth / Blue Marble globe projection",
+      "sourcePage": "https://svs.gsfc.nasa.gov/3615",
+      "sourceAsset": "assets/atlas-earth.png",
+      "credit": "NASA/Goddard Space Flight Center Scientific Visualization Studio. Blue Marble Next Generation data courtesy of Reto Stöckli, NASA/GSFC, and NASA Earth Observatory.",
+      "processing": "1024-pixel WebP derivative of the existing repository globe projection; original atlas image unchanged. Canvas uses a close crop, mild brightness/contrast and original coordinate overlays for the key piece."
+    },
+    {
+      "ids": ["moon"],
+      "file": "assets/entrance-moon.webp",
+      "title": "Moon / LROC globe projection",
+      "sourcePage": "https://svs.gsfc.nasa.gov/4720/",
+      "sourceAsset": "assets/atlas-moon.png",
+      "credit": "NASA Scientific Visualization Studio, Ernie Wright; LRO/LROC data.",
+      "processing": "1024-pixel WebP derivative of the existing repository globe projection; original atlas image unchanged."
+    },
+    {
+      "ids": ["nebula"],
+      "file": "assets/entrance-nebula.webp",
+      "title": "Optical View of Crab Nebula",
+      "sourcePage": "https://science.nasa.gov/asset/hubble/optical-view-of-crab-nebula/",
+      "sourceAsset": "https://assets.science.nasa.gov/dynamicimage/assets/science/missions/hubble/releases/2020/01/STScI-01EVSV2DYFMZQM2YCTWMR9EYT2.tif?w=2000",
+      "credit": "NASA, ESA",
+      "releaseDate": "2020-01-05",
+      "kind": "Visible-light astronomical image",
+      "processing": "Resized from the official 2000 × 2000 rendition to 1024 × 1024 WebP; source colors retained. Canvas supplies a small close crop and mild brightness/contrast."
+    },
+    {
+      "ids": ["solar"],
+      "file": "assets/entrance-solar.webp",
+      "title": "Sun's Quiet Corona",
+      "sourcePage": "https://www.nasa.gov/image-article/suns-quiet-corona/",
+      "sourceAsset": "https://www.nasa.gov/wp-content/uploads/2023/03/740364main_latest_4096_0171-full_full.jpg",
+      "credit": "NASA/SDO",
+      "releaseDate": "2013-04-09",
+      "kind": "Solar Dynamics Observatory AIA 171 Å extreme-ultraviolet image, displayed in the source's assigned gold color",
+      "processing": "Resized from 1041 × 1041 to 1024 × 1024 WebP. Canvas close crop omits the baked-in timestamp; the caption identifies extreme ultraviolet."
+    },
+    {
+      "ids": ["galaxy"],
+      "file": "assets/entrance-galaxy.webp",
+      "title": "The Whirlpool Galaxy and Companion Galaxy",
+      "sourcePage": "https://svs.gsfc.nasa.gov/30852/",
+      "sourceAsset": "https://svs.gsfc.nasa.gov/vis/a030000/a030800/a030852/m51_full-hst-4669x3240_print.jpg",
+      "credit": "NASA, ESA, S. Beckwith (STScI), and The Hubble Heritage Team (STScI/AURA)",
+      "releaseDate": "2017-02-27",
+      "kind": "Hubble image of M51 and NGC 5195",
+      "processing": "Official 1024 × 710 image encoded as WebP; no recoloring. The entrance caption identifies Whirlpool/M51, not the Milky Way. Canvas uses a square close crop."
+    },
+    {
+      "ids": ["blackhole"],
+      "file": "assets/entrance-blackhole.webp",
+      "title": "Black Hole Accretion Disk Visualization",
+      "sourcePage": "https://svs.gsfc.nasa.gov/13326/",
+      "sourceAsset": "https://svs.gsfc.nasa.gov/vis/a010000/a013300/a013326/Black_Hole_Accretion_Disk_Sim_4k_ProRes.00386_print.jpg",
+      "credit": "NASA's Goddard Space Flight Center/Jeremy Schnittman",
+      "releaseDate": "2019-09-25",
+      "kind": "Physically modeled visualization of a non-rotating black hole and its accretion disk; not a photograph",
+      "processing": "Official 1024 × 1024 still encoded as WebP. Canvas uses a close crop, modest brightness and 80% saturation; source geometry is unchanged."
+    },
+    {
+      "ids": ["telescope"],
+      "file": "assets/entrance-telescope.webp",
+      "title": "Hubble above Earth following its second servicing mission",
+      "sourcePage": "https://science.nasa.gov/mission/hubble/observatory/",
+      "sourceAsset": "https://science.nasa.gov/wp-content/uploads/2023/04/27946391011_d40ff10573_h-jpg.webp",
+      "credit": "NASA",
+      "kind": "Space Shuttle photograph of the Hubble Space Telescope in February 1997",
+      "processing": "Resized from the official 1536 × 1020 image to 1024 × 680 WebP; canvas crops around the telescope."
+    },
+    {
+      "ids": ["saturn", "jupiter", "mars"],
+      "files": ["assets/atlas-saturn.jpg", "assets/atlas-jupiter.jpg", "assets/atlas-mars.jpg"],
+      "sourceManifest": "assets/atlas-sources.json",
+      "credit": "NASA; individual source pages and original asset URLs are retained in the existing atlas source manifest.",
+      "processing": "Existing local assets unchanged; canvas performs cropping and mild brightness/contrast."
+    }
+  ],
+  "illustrations": {
+    "ids": ["coordinates", "sphere", "orbit", "parallax", "spectrum", "stars", "geometry", "cosmicweb"],
+    "credit": "Original PISCES Canvas illustrations",
+    "notes": "Coordinate grids, the unnamed asterism, spectral pattern, orbital geometry and cosmic-web network are schematic, not measured datasets. Photo-loading fallbacks are labeled schematic or study and do not claim to be observatory photographs."
+  }
+}
