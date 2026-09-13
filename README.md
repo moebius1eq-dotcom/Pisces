@@ -25,6 +25,8 @@ comic book pages and images of different characters rapidly appear.
 
 ## Current Features
 
+- PISCES observatory hub with Explore, Learn, and Take Part directions
+- Direct access to Journey Through Scale, Worlds, and Deep Sky
 - Cinematic jigsaw-piece entrance
 - Astronomy images on puzzle pieces
 - Interactive 3D space scenes
@@ -88,5 +90,10 @@ For detailed image source links and attribution information, see:
 ## Status
 
 PISCES is still in development.
+
+Phase 1 hub is available for local review. Open `index.html` for the full entrance,
+or `index.html#hub` to return directly to the observatory. Learn and Take Part
+currently describe planned content; lessons and the opportunities directory are not built yet.
+The existing Journey and atlas pages remain connected without replacing their renderers.
 
 Currently I'm mainly focusing on the entrance/opening experience. (9/13/2026)

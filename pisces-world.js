@@ -32,10 +32,11 @@ export function createDestinationWorld({THREE,scene,small=false}) {
   const lane=new THREE.Mesh(geometry,material);lane.position.set(6,15,-290);lane.rotation.z=.24;root.add(lane);resources.push(geometry,material);
   const sphere=new THREE.SphereGeometry(37,small?32:56,small?20:32);
   const surface=new THREE.MeshStandardMaterial({color:0x0a121c,roughness:1,metalness:0});
+  const originalSurface=surface.color.clone(), hubSurface=new THREE.Color(0x253b52);
   const horizon=new THREE.Mesh(sphere,surface);horizon.position.set(58,-39,-182);root.add(horizon);resources.push(sphere,surface);
   const rim=new THREE.DirectionalLight(0xb9d6e5,2.8);rim.position.set(-35,55,-160);rim.target=horizon;root.add(rim);
   root.add(new THREE.AmbientLight(0x526a80,.07));
-  return {root,dispose(){scene.remove(root);resources.forEach(r=>r.dispose());}};
+  return {root,setHub(amount=0){surface.color.copy(originalSurface).lerp(hubSurface,amount);rim.intensity=2.8+amount*1.8;starMaterial.opacity=.9+amount*.1;},dispose(){scene.remove(root);resources.forEach(r=>r.dispose());}};
 }
 
 export function createCanvasDestination() {

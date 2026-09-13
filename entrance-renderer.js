@@ -100,6 +100,7 @@ export function createMontageRenderer({ THREE, mount, artwork, onLost, onInvalid
     resize,
     update(id) { if (!released) { atlas.update(id); atlasMap.needsUpdate = true; } },
     draw(state, reduced) {
+      destination.setHub(state.hubLight || 0);
       const shot = passageCamera(state, cameraPose(state, camera.aspect, reduced), reduced);
       camera.fov = shot.fov; camera.position.set(...shot.position); camera.lookAt(...shot.target); camera.rotateZ(shot.roll);
       camera.updateProjectionMatrix();

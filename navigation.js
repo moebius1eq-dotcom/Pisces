@@ -1,13 +1,22 @@
 (() => {
   const header = document.querySelector('.site-header');
+  const mark = header.querySelector('.site-mark');
+  mark.textContent = 'PISCES'; mark.href = 'index.html#hub'; mark.setAttribute('aria-label','PISCES home');
   header.querySelector('.primary-nav')?.remove();
   header.querySelector('.atlas-header-note')?.remove();
   const oldIndex = header.querySelector('.menu-button');
   if (oldIndex) oldIndex.hidden = true;
-  const status = document.createElement('span'); status.className = 'observatory-mark'; status.textContent = 'COSMOS EXPLORER';
+  const status = document.createElement('span'); status.className = 'observatory-mark'; status.textContent = 'THE OBSERVATORY';
   const toggle = document.createElement('button'); toggle.className = 'burger'; toggle.setAttribute('aria-label','Open navigation'); toggle.setAttribute('aria-haspopup','dialog'); toggle.setAttribute('aria-expanded','false'); toggle.setAttribute('aria-controls','site-navigation'); toggle.innerHTML = '<span></span><span></span>';
   const menu = document.createElement('dialog'); menu.id = 'site-navigation'; menu.className = 'navigation-dialog'; menu.setAttribute('aria-label','Site navigation');
   menu.innerHTML = `<div class="navigation-top"><span>EXPLORE THE OBSERVATORY</span><button class="navigation-close" aria-label="Close navigation">Close ×</button></div><nav><a href="index.html"><small>01 / IMMERSIVE EXPERIENCE</small><strong>The journey</strong></a><a href="planets.html"><small>02 / WORLDS UP CLOSE</small><strong>Planet atlas</strong></a><a href="deep-space.html"><small>03 / BEYOND OUR SUN</small><strong>Deep space</strong></a><a href="observatory.html"><small>04 / OUR PERSPECTIVE</small><strong>The observatory</strong></a></nav><p>A universe to explore. At your own pace.</p>`;
+  const destinations=menu.querySelectorAll('nav a');
+  destinations[0].href='index.html#departure';
+  destinations[0].querySelector('strong').textContent='Journey Through Scale';
+  destinations[1].querySelector('strong').textContent='Worlds';
+  destinations[2].querySelector('strong').textContent='Deep Sky';
+  const home=document.createElement('a');home.href='index.html#hub';home.textContent='← PISCES home';home.className='navigation-home';
+  menu.querySelector('nav').before(home);
   if(oldIndex) {
     const stops=document.createElement('button');stops.className='navigation-stops';stops.textContent='Choose a journey stop ↗';
     menu.querySelector('nav').after(stops);

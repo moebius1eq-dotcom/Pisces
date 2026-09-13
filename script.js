@@ -53,6 +53,7 @@ function scrollToScale(link, behavior = motionQuery.matches ? "auto" : "smooth")
 }
 
 function restoreLocationScale(behavior = "auto") {
+  if (location.hash === '#departure') { window.scrollTo({top:departure.offsetTop,behavior}); return; }
   const exact = /^#flight=(0(?:\.\d+)?|1(?:\.0+)?)$/.exec(location.hash);
   const saved = exact ? Number(exact[1]) : history.state?.journeyProgress;
   if (typeof saved === 'number' && Number.isFinite(saved) && saved >= 0 && saved <= 1) {
@@ -79,6 +80,7 @@ function getCurrentScaleIndex(progress) {
 }
 
 function syncLocationToScroll() {
+  if (page.classList.contains('is-loading')) return;
   if (window.scrollY < departure.offsetTop - window.innerHeight * 0.1) {
     if ((window.location.hash && window.location.hash !== "#top") || history.state?.journeyProgress !== undefined) history.replaceState(null, "", "#top");
     return;
