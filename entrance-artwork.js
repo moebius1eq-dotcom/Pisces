@@ -1,10 +1,11 @@
+import { additionalStudies } from './entrance-library.js';
 // Small, static astronomy studies for the PISCES entrance. These are editorial
 // glimpses: diagrams and simulated spectra/star fields are illustrations, not data.
 const SIZE = 512;
 const INK = '#e1e7e8';
 const BLUE = '#8eb6ce';
 const GOLD = '#d6b782';
-const IDS = ['earth', 'moon', 'saturn', 'jupiter', 'mars', 'coordinates', 'sphere', 'orbit', 'parallax', 'spectrum', 'stars', 'solar', 'galaxy', 'geometry', 'key', 'nebula', 'blackhole', 'telescope', 'cosmicweb'];
+const IDS = ['earth', 'moon', 'saturn', 'jupiter', 'mars', 'coordinates', 'sphere', 'orbit', 'parallax', 'spectrum', 'stars', 'solar', 'galaxy', 'geometry', 'key', 'nebula', 'blackhole', 'telescope', 'cosmicweb', ...additionalStudies.map(study => study.id)];
 
 export const CONTENT_CREDITS = [
   'Earth and Moon: the existing locally stored NASA-derived globe assets.',
@@ -329,6 +330,7 @@ function fallback(c, id) {
   else if (id === 'blackhole') blackHoleStudy(c);
   else if (id === 'telescope') telescopeStudy(c);
   else if (id === 'cosmicweb') cosmicWebStudy(c);
+  else if (additionalStudies.some(study => study.id === id)) { starStudy(c, id.length * 91, 80); coordinateGrid(c, .5); label(c, id.toUpperCase() + ' / SCHEMATIC', 27, 42, 15); }
   else planetFallback(c, id);
 }
 
@@ -358,7 +360,12 @@ function paintPhoto(c, image, id) {
       earth: ['EARTH', 'BLUE MARBLE'], moon: ['MOON', 'LUNAR SURFACE'],
       solar: ['THE SUN', 'SDO / EXTREME ULTRAVIOLET'], galaxy: ['WHIRLPOOL', 'M51 / HUBBLE'],
       nebula: ['CRAB NEBULA', 'VISIBLE LIGHT / HUBBLE'], blackhole: ['BLACK HOLE', 'NASA / VISUALIZATION'],
-      telescope: ['HUBBLE', 'OBSERVING FROM ORBIT']
+      telescope: ['HUBBLE', 'OBSERVING FROM ORBIT'],
+      carina: ['COSMIC CLIFFS', 'WEBB / INFRARED'], southernring: ['SOUTHERN RING', 'WEBB / INFRARED COMPARISON'],
+      casa: ['CASSIOPEIA A', 'CHANDRA / X-RAY'], enceladus: ['ENCELADUS', 'CASSINI / SURFACE'],
+      europa: ['EUROPA', 'GALILEO / SURFACE MOSAIC'], titan: ['TITAN', 'CASSINI / RADAR MAP'],
+      juno: ['JUNO', 'NASA / ILLUSTRATION'], cluster: ['IC 4499', 'HUBBLE / GLOBULAR CLUSTER'],
+      horsehead: ['HORSEHEAD', 'HUBBLE / INFRARED'], eagle: ['EAGLE NEBULA', 'WISE / INFRARED']
     };
     const [title, note] = captions[id] || [id.toUpperCase(), 'PLANETARY STUDY'];
     label(c, title, 27, 42, 18);
@@ -391,7 +398,8 @@ export function createMontageArtwork({ onUpdate = () => {} } = {}) {
     ['assets/entrance-solar.webp', ['solar']],
     ['assets/entrance-galaxy.webp', ['galaxy']],
     ['assets/entrance-blackhole.webp', ['blackhole']],
-    ['assets/entrance-telescope.webp', ['telescope']]
+    ['assets/entrance-telescope.webp', ['telescope']],
+    ...additionalStudies.map(study => [study.file, [study.id]])
   ];
   const jobs = sources.map(([src, ids]) => new Promise(resolve => {
     const image = new Image();

@@ -8,7 +8,7 @@ const smooth = value => {
 };
 const mix = (a, b, t) => a + (b - a) * t;
 const SHOTS = ['mystery', 'discovery', 'acceleration', 'scale-reveal', 'convergence', 'silence'];
-const DURATIONS = [1.4, 1.8, 1.9, 1.7, 2, .7];
+const DURATIONS = [1.4, 1.8, 1.9, 1.7, 3.4, .7];
 
 function hermite(from, to, outgoing, incoming, duration, t) {
   const t2 = t * t, t3 = t2 * t;

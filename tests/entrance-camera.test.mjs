@@ -6,7 +6,7 @@ const { cameraPose } = await import(`data:text/javascript;base64,${Buffer.from(s
 
 const phases = ['mystery', 'discovery', 'acceleration', 'scale-reveal', 'convergence', 'silence',
   'awaiting', 'final-piece', 'seating', 'settling', 'identity', 'locked'];
-const durations = [1.4, 1.8, 1.9, 1.7, 2, .7];
+const durations = [1.4, 1.8, 1.9, 1.7, 3.4, .7];
 const pose = (state, phaseProgress = 0, aspect = 16 / 9, reduced = false) => cameraPose({ state, phaseProgress }, aspect, reduced);
 const close = (actual, expected, tolerance = 1e-9) => assert.ok(Math.abs(actual - expected) < tolerance, `${actual} differs from ${expected}`);
 const same = (a, b, tolerance) => {
@@ -72,7 +72,7 @@ test('final-piece follow is purposeful, bounded, and lands without a positional 
   same(pose('settling', 1), pose('identity', 0));
 });
 
-test('completed framing contains the complete puzzle and title at phone and desktop aspects', () => {
+test('completed framing contains the central identity region at phone and desktop aspects', () => {
   for (const aspect of [16 / 9, 1, 9 / 16, .3, 4]) {
     const view = pose('locked', 1, aspect);
     const halfHeight = view.position[2] * Math.tan(view.fov * Math.PI / 360);

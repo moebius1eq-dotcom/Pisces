@@ -7,7 +7,7 @@ const DURATION = {
   discovery: 1800,
   acceleration: 1900,
   'scale-reveal': 1700,
-  convergence: 2000,
+  convergence: 3400,
   silence: 700,
   'final-piece': 1400,
   seating: 130,

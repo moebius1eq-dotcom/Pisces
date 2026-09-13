@@ -29,7 +29,7 @@ export function createMontageRenderer({ THREE, mount, artwork, onLost, onInvalid
   function material(defines = {}, overrides = {}) {
     const result = new THREE.ShaderMaterial({ defines, uniforms: { ...common,
       uPopulation: { value: 0 }, uOpacity: { value: 1 },
-      uRect: { value: new THREE.Vector4(...atlas.rect('earth')) }, uPatch: { value: new THREE.Vector4(0, 0, 1, 1) },
+      uRect: { value: new THREE.Vector4(...atlas.rect('earth')) },
       uBoardCenter: { value: new THREE.Vector2() }, ...overrides },
       vertexShader: pieceVertex, fragmentShader: pieceFragment,
       side: THREE.DoubleSide, transparent: true, depthWrite: true });
@@ -47,10 +47,8 @@ export function createMontageRenderer({ THREE, mount, artwork, onLost, onInvalid
   const flat = new THREE.ShapeGeometry(shape(3)); resources.push(flat);
   const impostor = new THREE.PlaneGeometry(CELL * 1.6, CELL * 1.6); resources.push(impostor);
   for (const fragment of fragments.filter(f => f.hero >= 0 || f.id === 'key')) {
-    const patch = fragment.hero >= 18 && fragment.hero <= 20
-      ? [ (fragment.hero - 18) / 3, 1 / 3, 1 / 3, 1 / 3 ] : [0, 0, 1, 1];
     const mat = material({}, { uRect: { value: new THREE.Vector4(...atlas.rect(fragment.content)) },
-      uPatch: { value: new THREE.Vector4(...patch) }, uBoardCenter: { value: new THREE.Vector2(...fragment.center) } });
+      uBoardCenter: { value: new THREE.Vector2(...fragment.center) } });
     const mesh = new THREE.Mesh(solid, mat); scene.add(mesh); heroes.push({ fragment, mesh, material: mat });
   }
   const vectorAttribute = (geometry, name, values, size) => geometry.setAttribute(name,
@@ -64,21 +62,20 @@ export function createMontageRenderer({ THREE, mount, artwork, onLost, onInvalid
     vectorAttribute(geometry, 'aTurn', items.flatMap(p => p.turn), 3);
     vectorAttribute(geometry, 'aMeta', items.flatMap(p => [p.scale, p.seed, p.index, 0]), 4);
     vectorAttribute(geometry, 'aRect', items.flatMap(p => atlas.rect(p.content)), 4);
-    vectorAttribute(geometry, 'aPatch', items.flatMap(p => !field
-      ? [p.column % 3 / 3, p.row % 3 / 3, 1 / 3, 1 / 3] : [0, 0, 1, 1]), 4);
     geometry.instanceCount = items.length;
     const mat = material({ POPULATION: 1, ...(distant ? { IMPOSTOR: 1 } : {}) }, { uPopulation: { value: field ? 1 : 0 } });
-    if (field) mat.depthWrite = false;
+    mat.depthWrite = true;
     const mesh = new THREE.Mesh(geometry, mat);
     // Shader travel exceeds the untransformed base geometry's bounding sphere.
     mesh.frustumCulled = false;
+    mesh.userData.pieceIds = items.map(piece => piece.id);
     scene.add(mesh); resources.push(geometry);
     const result = { mesh, geometry, material: mat, max: items.length, field };
     population.push(result); return result;
   }
   makePopulation(fragments.filter(f => f.hero < 0 && f.id !== 'key'), flat);
   const middle = makePopulation(createField(small ? 850 : 2200), flat, false, true);
-  const distant = makePopulation(createField(small ? 4500 : 16000, true), impostor, true, true);
+  const distant = makePopulation(createField(small ? 4500 : 16000, true, small ? 850 : 2200), impostor, true, true);
 
   // A real open socket remains during silence and the asset-readiness hold.
   const socket = new THREE.BufferGeometry().setFromPoints(puzzleOutline(5).map(([x, y]) => new THREE.Vector3(x, y, -.07)));
@@ -102,7 +99,7 @@ export function createMontageRenderer({ THREE, mount, artwork, onLost, onInvalid
       const shot = cameraPose(state, camera.aspect, reduced);
       camera.fov = shot.fov; camera.position.set(...shot.position); camera.lookAt(...shot.target); camera.rotateZ(shot.roll);
       camera.updateProjectionMatrix();
-      common.uConvergence.value = reduced ? 1 : state.convergence;
+      common.uConvergence.value = reduced ? 1 : state.state === 'convergence' ? state.phaseProgress : state.convergence;
       common.uTime.value = reduced ? 0 : state.filmTime;
       common.uAcceleration.value = state.acceleration;
       common.uBrand.value = state.brand; common.uReveal.value = state.reveal;
@@ -114,7 +111,7 @@ export function createMontageRenderer({ THREE, mount, artwork, onLost, onInvalid
         mesh.visible = pose.opacity > .001;
         mat.uniforms.uOpacity.value = pose.opacity;
       }
-      for (const item of population) item.mesh.visible = !item.field || (!reduced && state.convergence < .98 && state.brand === 0);
+      for (const item of population) item.mesh.visible = state.brand < 1 || !item.field;
       socketMaterial.opacity = .6 * state.silence * (1 - state.seat) * (1 - state.brand);
       renderer.render(scene, camera);
       // Downgrade sustained slow presentation, without changing choreography.
@@ -124,8 +121,7 @@ export function createMontageRenderer({ THREE, mount, artwork, onLost, onInvalid
         if (interval < 150) { samples++; slow += interval > 27 ? 1 : 0; }
         if (!degraded && samples >= 45 && slow / samples > .45) {
           degraded = true; dpr = 1;
-          middle.geometry.instanceCount = Math.floor(middle.max * .55);
-          distant.geometry.instanceCount = Math.floor(distant.max * .5);
+          // Keep the physical population intact; only pixel cost changes mid-film.
           resize();
         }
       }

@@ -16,7 +16,7 @@ test('shots converge and fall silent before readiness, but elapsed time cannot a
   const frame = timeline.step(60000);
   assert.equal(frame.state, 'awaiting');
   assert.equal(frame.elapsed, 60000);
-  assert.equal(frame.filmTime, 9.5);
+  assert.equal(frame.filmTime, 10.9);
   assert.equal(frame.phaseProgress, 0);
   assembled(frame);
   const hold = timeline.step(10000);
@@ -38,7 +38,7 @@ test('the opening reveals over 350 ms within the mystery shot', () => {
   assert.equal(frame.filmTime, .35);
 });
 
-test('ready-at-start boundaries retain every directed shot and total 13300 ms', () => {
+test('ready-at-start boundaries retain every directed shot and total 14700 ms', () => {
   const timeline = createEntranceTimeline();
   timeline.ready();
   const boundaries = [
@@ -46,7 +46,7 @@ test('ready-at-start boundaries retain every directed shot and total 13300 ms', 
     [1800, 'acceleration', 'discovery', 'acceleration'],
     [1900, 'scale-reveal', 'acceleration', 'scaleReveal'],
     [1700, 'convergence', 'scaleReveal', 'convergence'],
-    [2000, 'silence', 'convergence', 'silence'],
+    [3400, 'silence', 'convergence', 'silence'],
     [700, 'final-piece', 'silence', 'finalPiece'],
     [1400, 'seating', 'finalPiece', 'seat'],
     [130, 'settling', 'seat', 'resonance'],
@@ -67,34 +67,34 @@ test('ready-at-start boundaries retain every directed shot and total 13300 ms', 
   close(timeline.step(900).brand, .5);
   const frame = timeline.step(900);
   assert.equal(frame.state, 'locked');
-  assert.equal(frame.elapsed, 13300);
-  assert.equal(frame.filmTime, 13.3);
+  assert.equal(frame.elapsed, 14700);
+  assert.equal(frame.filmTime, 14.7);
   assert.equal(frame.phaseProgress, 1);
   for (const channel of channels) assert.equal(frame[channel], 1);
 });
 
 test('late readiness releases the gate at zero progress and preserves the complete ending', () => {
   const timeline = createEntranceTimeline();
-  assert.equal(timeline.step(9500).state, 'awaiting');
+  assert.equal(timeline.step(10900).state, 'awaiting');
   timeline.step(1000);
   timeline.ready();
   const frame = timeline.step(0);
   assert.equal(frame.state, 'final-piece');
   assert.equal(frame.finalPiece, 0);
   assert.equal(frame.phaseProgress, 0);
-  assert.equal(frame.elapsed, 10500);
-  assert.equal(frame.filmTime, 9.5);
+  assert.equal(frame.elapsed, 11900);
+  assert.equal(frame.filmTime, 10.9);
   const locked = timeline.step(3800);
   assert.equal(locked.state, 'locked');
-  assert.equal(locked.elapsed, 14300);
-  assert.equal(locked.filmTime, 13.3);
+  assert.equal(locked.elapsed, 15700);
+  assert.equal(locked.filmTime, 14.7);
 });
 
 test('readiness during convergence cannot shortcut convergence or the silence', () => {
   const timeline = createEntranceTimeline();
   timeline.step(8000);
   timeline.ready();
-  assert.equal(timeline.step(799).state, 'convergence');
+  assert.equal(timeline.step(2199).state, 'convergence');
   const silence = timeline.step(1);
   assert.equal(silence.state, 'silence');
   assert.equal(silence.silence, 0);
@@ -114,7 +114,7 @@ test('shot progress exposes linear timing alongside eased motion and linear reso
   const half = timeline.step(350);
   close(half.phaseProgress, .5);
   close(half.mystery, .5);
-  timeline.step(10330);
+  timeline.step(11730);
   const ripple = timeline.step(117.5);
   assert.equal(ripple.state, 'settling');
   close(ripple.phaseProgress, .25);
@@ -129,7 +129,7 @@ test('large deltas and ordinary frames reach equivalent shot positions', () => {
     let actual;
     for (let i = 0; i < 112; i++) actual = small.step(100);
     assert.deepEqual(actual, expected);
-    if (ready) assert.equal(large.step(100000).elapsed, 13300);
+    if (ready) assert.equal(large.step(100000).elapsed, 14700);
   }
 });
 
@@ -138,7 +138,7 @@ test('reduced motion waits as a converged still with an empty center', () => {
   const staticFrame = timeline.step(0, true);
   assert.equal(staticFrame.state, 'awaiting');
   assert.equal(staticFrame.elapsed, 0);
-  assert.equal(staticFrame.filmTime, 9.5);
+  assert.equal(staticFrame.filmTime, 10.9);
   assembled(staticFrame);
   const hold = timeline.step(5000, true);
   assembled(hold);
@@ -147,7 +147,7 @@ test('reduced motion waits as a converged still with an empty center', () => {
   const locked = timeline.step(0, true);
   assert.equal(locked.state, 'locked');
   assert.equal(locked.elapsed, hold.elapsed);
-  assert.equal(locked.filmTime, 13.3);
+  assert.equal(locked.filmTime, 14.7);
   for (const channel of channels) assert.equal(locked[channel], 1);
 });
 
@@ -170,13 +170,13 @@ test('leaving reduced motion preserves the assembled hold until readiness', () =
   timeline.ready();
   const frame = timeline.step(0, false);
   assert.equal(frame.state, 'final-piece');
-  assert.equal(frame.filmTime, 9.5);
+  assert.equal(frame.filmTime, 10.9);
 });
 
 test('replay restarts mystery while retaining an established readiness result', () => {
   const timeline = createEntranceTimeline();
   timeline.ready();
-  timeline.step(13300);
+  timeline.step(14700);
   timeline.reset();
   const start = timeline.step(0);
   assert.equal(start.state, 'mystery');
@@ -184,13 +184,13 @@ test('replay restarts mystery while retaining an established readiness result', 
   assert.equal(start.filmTime, 0);
   assert.equal(start.phaseProgress, 0);
   for (const channel of channels) assert.equal(start[channel], 0);
-  assert.equal(timeline.step(9500).state, 'final-piece');
+  assert.equal(timeline.step(10900).state, 'final-piece');
   timeline.reset();
   assert.equal(timeline.step(0, true).state, 'locked');
   const unready = createEntranceTimeline();
-  unready.step(9500);
+  unready.step(10900);
   unready.reset();
-  assert.equal(unready.step(13300).state, 'awaiting');
+  assert.equal(unready.step(14700).state, 'awaiting');
 });
 
 test('negative and nonfinite deltas cannot reverse or corrupt progress', () => {
@@ -217,7 +217,7 @@ test('normal frames preserve every shot, monotonic channels, and a stable final 
   const seen = new Set();
   let previous = timeline.step(0);
   for (let i = 0; i < 500; i++) {
-    if (i === 210) timeline.ready();
+    if (i === 238) timeline.ready();
     const frame = timeline.step(50);
     seen.add(frame.state);
     assert.ok(order.indexOf(frame.state) >= order.indexOf(previous.state));
@@ -232,7 +232,7 @@ test('normal frames preserve every shot, monotonic channels, and a stable final 
     previous = frame;
   }
   assert.deepEqual([...seen], order);
-  assert.equal(previous.elapsed, 14300);
-  assert.equal(previous.filmTime, 13.3);
+  assert.equal(previous.elapsed, 15700);
+  assert.equal(previous.filmTime, 14.7);
   assert.deepEqual(timeline.step(1000000), previous);
 });

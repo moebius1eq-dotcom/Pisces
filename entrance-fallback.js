@@ -1,4 +1,4 @@
-import { fragments, fragmentPose, puzzleOutline, CELL, compositionBounds as bounds, createField } from './entrance-model.js';
+import { fragments, fragmentPose, puzzleOutline, CELL, compositionBounds as bounds, createField, surfaceDepth } from './entrance-model.js';
 import { cameraPose } from './entrance-camera.js';
 import { createIdentity } from './entrance-textures.js';
 
@@ -89,19 +89,8 @@ export function createCanvasMontage({ mount, artwork, onInvalidate = () => {} })
   function paintArtwork(piece, tile) {
     context.save();
     context.scale(1, -1);
-    // Adjacent ordinary pieces sample a common image across each 3×3 region.
-    // The slight overscan supplies imagery all the way out to boundary tabs.
-    if (piece.hero === -1 && piece.id !== 'key') {
-      const extent = CELL * 3.6;
-      context.drawImage(tile, -(piece.column % 3 + .8) * CELL,
-        -(2 - piece.row % 3 + .8) * CELL, extent, extent);
-    } else if (piece.hero >= 18 && piece.hero <= 20) {
-      const extent = CELL * 3.6;
-      context.drawImage(tile, 0, tile.height / 3, tile.width, tile.height / 3,
-        -(piece.hero - 18 + .8) * CELL, -.8 * CELL, extent, CELL * 1.6);
-    } else {
-      context.drawImage(tile, -.8 * CELL, -.8 * CELL, CELL * 1.6, CELL * 1.6);
-    }
+    // Each physical piece keeps its own complete study from flight to seating.
+    context.drawImage(tile, -.8 * CELL, -.8 * CELL, CELL * 1.6, CELL * 1.6);
     context.restore();
   }
 
@@ -160,19 +149,10 @@ export function createCanvasMontage({ mount, artwork, onInvalidate = () => {} })
     const reveal = reduced ? 1 : Number.isFinite(state.reveal) ? clamp(state.reveal) : 1;
     const faces = [];
     const convergence = ease(state.convergence || 0);
-    if (!reduced && convergence < .99) {
-      for (const piece of field) {
-        const pose = {
-          position: piece.position.map((value, axis) => mix(value, piece.target[axis], convergence)),
-          rotation: piece.turn.map(angle => angle * (1 - convergence)),
-          scale: mix(piece.scale, .42, convergence), opacity: (.36 + piece.seed * .4) * (1 - convergence), wave: 0,
-        };
-        const projected = face(piece, pose, project, view);
-        if (projected) faces.push(projected);
-      }
-    }
-    for (const piece of fragments) {
-      const projected = face(piece, fragmentPose(piece, state, reduced), project, view);
+    for (const piece of [...field, ...fragments]) {
+      const pose = fragmentPose(piece, state, reduced);
+      pose.position[2] += surfaceDepth(...piece.center) * convergence;
+      const projected = face(piece, pose, project, view);
       if (projected) faces.push(projected);
     }
     faces.sort((a, b) => b.center.depth - a.center.depth);

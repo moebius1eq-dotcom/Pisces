@@ -7,25 +7,44 @@
   },
   "assets": [
     {
-      "ids": ["earth", "key"],
+      "ids": [
+        "earth",
+        "key"
+      ],
       "file": "assets/entrance-earth.webp",
       "title": "Earth / Blue Marble globe projection",
       "sourcePage": "https://svs.gsfc.nasa.gov/3615",
       "sourceAsset": "assets/atlas-earth.png",
       "credit": "NASA/Goddard Space Flight Center Scientific Visualization Studio. Blue Marble Next Generation data courtesy of Reto Stöckli, NASA/GSFC, and NASA Earth Observatory.",
-      "processing": "1024-pixel WebP derivative of the existing repository globe projection; original atlas image unchanged. Canvas uses a close crop, mild brightness/contrast and original coordinate overlays for the key piece."
+      "processing": "1024-pixel WebP derivative of the existing repository globe projection; original atlas image unchanged. Canvas uses a close crop, mild brightness/contrast and original coordinate overlays for the key piece.",
+      "localFilename": "assets/entrance-earth.webp",
+      "subject": "Earth / Blue Marble globe projection",
+      "institution": "NASA and the mission/observatory partners named in the credit",
+      "license": "Educational/informational reuse under NASA Media Usage Guidelines, with supplied credits; no endorsement implied.",
+      "licenseUrl": "https://www.nasa.gov/nasa-brand-center/images-and-media/",
+      "requiredAttribution": "NASA/Goddard Space Flight Center Scientific Visualization Studio. Blue Marble Next Generation data courtesy of Reto Stöckli, NASA/GSFC, and NASA Earth Observatory."
     },
     {
-      "ids": ["moon"],
+      "ids": [
+        "moon"
+      ],
       "file": "assets/entrance-moon.webp",
       "title": "Moon / LROC globe projection",
       "sourcePage": "https://svs.gsfc.nasa.gov/4720/",
       "sourceAsset": "assets/atlas-moon.png",
       "credit": "NASA Scientific Visualization Studio, Ernie Wright; LRO/LROC data.",
-      "processing": "1024-pixel WebP derivative of the existing repository globe projection; original atlas image unchanged."
+      "processing": "1024-pixel WebP derivative of the existing repository globe projection; original atlas image unchanged.",
+      "localFilename": "assets/entrance-moon.webp",
+      "subject": "Moon / LROC globe projection",
+      "institution": "NASA and the mission/observatory partners named in the credit",
+      "license": "Educational/informational reuse under NASA Media Usage Guidelines, with supplied credits; no endorsement implied.",
+      "licenseUrl": "https://www.nasa.gov/nasa-brand-center/images-and-media/",
+      "requiredAttribution": "NASA Scientific Visualization Studio, Ernie Wright; LRO/LROC data."
     },
     {
-      "ids": ["nebula"],
+      "ids": [
+        "nebula"
+      ],
       "file": "assets/entrance-nebula.webp",
       "title": "Optical View of Crab Nebula",
       "sourcePage": "https://science.nasa.gov/asset/hubble/optical-view-of-crab-nebula/",
@@ -33,10 +52,18 @@
       "credit": "NASA, ESA",
       "releaseDate": "2020-01-05",
       "kind": "Visible-light astronomical image",
-      "processing": "Resized from the official 2000 × 2000 rendition to 1024 × 1024 WebP; source colors retained. Canvas supplies a small close crop and mild brightness/contrast."
+      "processing": "Resized from the official 2000 × 2000 rendition to 1024 × 1024 WebP; source colors retained. Canvas supplies a small close crop and mild brightness/contrast.",
+      "localFilename": "assets/entrance-nebula.webp",
+      "subject": "Optical View of Crab Nebula",
+      "institution": "NASA and the mission/observatory partners named in the credit",
+      "license": "Educational/informational reuse under NASA Media Usage Guidelines, with supplied credits; no endorsement implied.",
+      "licenseUrl": "https://www.nasa.gov/nasa-brand-center/images-and-media/",
+      "requiredAttribution": "NASA, ESA"
     },
     {
-      "ids": ["solar"],
+      "ids": [
+        "solar"
+      ],
       "file": "assets/entrance-solar.webp",
       "title": "Sun's Quiet Corona",
       "sourcePage": "https://www.nasa.gov/image-article/suns-quiet-corona/",
@@ -44,10 +71,18 @@
       "credit": "NASA/SDO",
       "releaseDate": "2013-04-09",
       "kind": "Solar Dynamics Observatory AIA 171 Å extreme-ultraviolet image, displayed in the source's assigned gold color",
-      "processing": "Resized from 1041 × 1041 to 1024 × 1024 WebP. Canvas close crop omits the baked-in timestamp; the caption identifies extreme ultraviolet."
+      "processing": "Resized from 1041 × 1041 to 1024 × 1024 WebP. Canvas close crop omits the baked-in timestamp; the caption identifies extreme ultraviolet.",
+      "localFilename": "assets/entrance-solar.webp",
+      "subject": "Sun's Quiet Corona",
+      "institution": "NASA and the mission/observatory partners named in the credit",
+      "license": "Educational/informational reuse under NASA Media Usage Guidelines, with supplied credits; no endorsement implied.",
+      "licenseUrl": "https://www.nasa.gov/nasa-brand-center/images-and-media/",
+      "requiredAttribution": "NASA/SDO"
     },
     {
-      "ids": ["galaxy"],
+      "ids": [
+        "galaxy"
+      ],
       "file": "assets/entrance-galaxy.webp",
       "title": "The Whirlpool Galaxy and Companion Galaxy",
       "sourcePage": "https://svs.gsfc.nasa.gov/30852/",
@@ -55,10 +90,18 @@
       "credit": "NASA, ESA, S. Beckwith (STScI), and The Hubble Heritage Team (STScI/AURA)",
       "releaseDate": "2017-02-27",
       "kind": "Hubble image of M51 and NGC 5195",
-      "processing": "Official 1024 × 710 image encoded as WebP; no recoloring. The entrance caption identifies Whirlpool/M51, not the Milky Way. Canvas uses a square close crop."
+      "processing": "Official 1024 × 710 image encoded as WebP; no recoloring. The entrance caption identifies Whirlpool/M51, not the Milky Way. Canvas uses a square close crop.",
+      "localFilename": "assets/entrance-galaxy.webp",
+      "subject": "The Whirlpool Galaxy and Companion Galaxy",
+      "institution": "NASA and the mission/observatory partners named in the credit",
+      "license": "Educational/informational reuse under NASA Media Usage Guidelines, with supplied credits; no endorsement implied.",
+      "licenseUrl": "https://www.nasa.gov/nasa-brand-center/images-and-media/",
+      "requiredAttribution": "NASA, ESA, S. Beckwith (STScI), and The Hubble Heritage Team (STScI/AURA)"
     },
     {
-      "ids": ["blackhole"],
+      "ids": [
+        "blackhole"
+      ],
       "file": "assets/entrance-blackhole.webp",
       "title": "Black Hole Accretion Disk Visualization",
       "sourcePage": "https://svs.gsfc.nasa.gov/13326/",
@@ -66,28 +109,239 @@
       "credit": "NASA's Goddard Space Flight Center/Jeremy Schnittman",
       "releaseDate": "2019-09-25",
       "kind": "Physically modeled visualization of a non-rotating black hole and its accretion disk; not a photograph",
-      "processing": "Official 1024 × 1024 still encoded as WebP. Canvas uses a close crop, modest brightness and 80% saturation; source geometry is unchanged."
+      "processing": "Official 1024 × 1024 still encoded as WebP. Canvas uses a close crop, modest brightness and 80% saturation; source geometry is unchanged.",
+      "localFilename": "assets/entrance-blackhole.webp",
+      "subject": "Black Hole Accretion Disk Visualization",
+      "institution": "NASA and the mission/observatory partners named in the credit",
+      "license": "Educational/informational reuse under NASA Media Usage Guidelines, with supplied credits; no endorsement implied.",
+      "licenseUrl": "https://www.nasa.gov/nasa-brand-center/images-and-media/",
+      "requiredAttribution": "NASA's Goddard Space Flight Center/Jeremy Schnittman"
     },
     {
-      "ids": ["telescope"],
+      "ids": [
+        "telescope"
+      ],
       "file": "assets/entrance-telescope.webp",
       "title": "Hubble above Earth following its second servicing mission",
       "sourcePage": "https://science.nasa.gov/mission/hubble/observatory/",
       "sourceAsset": "https://science.nasa.gov/wp-content/uploads/2023/04/27946391011_d40ff10573_h-jpg.webp",
       "credit": "NASA",
       "kind": "Space Shuttle photograph of the Hubble Space Telescope in February 1997",
-      "processing": "Resized from the official 1536 × 1020 image to 1024 × 680 WebP; canvas crops around the telescope."
+      "processing": "Resized from the official 1536 × 1020 image to 1024 × 680 WebP; canvas crops around the telescope.",
+      "localFilename": "assets/entrance-telescope.webp",
+      "subject": "Hubble above Earth following its second servicing mission",
+      "institution": "NASA and the mission/observatory partners named in the credit",
+      "license": "Educational/informational reuse under NASA Media Usage Guidelines, with supplied credits; no endorsement implied.",
+      "licenseUrl": "https://www.nasa.gov/nasa-brand-center/images-and-media/",
+      "requiredAttribution": "NASA"
     },
     {
-      "ids": ["saturn", "jupiter", "mars"],
-      "files": ["assets/atlas-saturn.jpg", "assets/atlas-jupiter.jpg", "assets/atlas-mars.jpg"],
+      "ids": [
+        "saturn",
+        "jupiter",
+        "mars"
+      ],
+      "files": [
+        "assets/atlas-saturn.jpg",
+        "assets/atlas-jupiter.jpg",
+        "assets/atlas-mars.jpg"
+      ],
       "sourceManifest": "assets/atlas-sources.json",
       "credit": "NASA; individual source pages and original asset URLs are retained in the existing atlas source manifest.",
-      "processing": "Existing local assets unchanged; canvas performs cropping and mild brightness/contrast."
+      "processing": "Existing local assets unchanged; canvas performs cropping and mild brightness/contrast.",
+      "localFilename": [
+        "assets/atlas-saturn.jpg",
+        "assets/atlas-jupiter.jpg",
+        "assets/atlas-mars.jpg"
+      ],
+      "subject": "saturn, jupiter, mars",
+      "institution": "NASA and the mission/observatory partners named in the credit",
+      "license": "Educational/informational reuse under NASA Media Usage Guidelines, with supplied credits; no endorsement implied.",
+      "licenseUrl": "https://www.nasa.gov/nasa-brand-center/images-and-media/",
+      "requiredAttribution": "NASA; individual source pages and original asset URLs are retained in the existing atlas source manifest."
+    },
+    {
+      "ids": [
+        "carina"
+      ],
+      "file": "assets/entrance-carina.webp",
+      "subject": "James Webb Space Telescope NIRCam Image of the “Cosmic Cliffs” in Carina Nebula",
+      "title": "James Webb Space Telescope NIRCam Image of the “Cosmic Cliffs” in Carina Nebula",
+      "sourcePage": "https://images.nasa.gov/details/carina_nebula",
+      "sourceAsset": "http://images-assets.nasa.gov/image/carina_nebula/carina_nebula~medium.jpg",
+      "institution": "STScI (Webb)",
+      "credit": "NASA, ESA, CSA, and STScI",
+      "license": "Educational/informational reuse under NASA Media Usage Guidelines; partner credits retained. No endorsement implied.",
+      "licenseUrl": "https://www.nasa.gov/nasa-brand-center/images-and-media/",
+      "processing": "Resized to at most1024px, encoded WebP quality86; source color retained. Square crop inside an individual jigsaw silhouette.",
+      "requiredAttribution": "NASA, ESA, CSA, and STScI",
+      "localFilename": "assets/entrance-carina.webp"
+    },
+    {
+      "ids": [
+        "southernring"
+      ],
+      "file": "assets/entrance-southernring.webp",
+      "subject": "James Webb Space Telescope Southern Ring Nebula (NIRCam and MIRI Images Side by Side)",
+      "title": "James Webb Space Telescope Southern Ring Nebula (NIRCam and MIRI Images Side by Side)",
+      "sourcePage": "https://images.nasa.gov/details/southern_ring_nebula",
+      "sourceAsset": "http://images-assets.nasa.gov/image/southern_ring_nebula/southern_ring_nebula~medium.jpg",
+      "institution": "STScI",
+      "credit": "NASA, ESA, CSA, and STScI",
+      "license": "Educational/informational reuse under NASA Media Usage Guidelines; partner credits retained. No endorsement implied.",
+      "licenseUrl": "https://www.nasa.gov/nasa-brand-center/images-and-media/",
+      "processing": "Resized to at most1024px, encoded WebP quality86; source color retained. Square crop inside an individual jigsaw silhouette.",
+      "requiredAttribution": "NASA, ESA, CSA, and STScI",
+      "localFilename": "assets/entrance-southernring.webp"
+    },
+    {
+      "ids": [
+        "casa"
+      ],
+      "file": "assets/entrance-casa.webp",
+      "subject": "History of Chandra X-Ray Observatory",
+      "title": "History of Chandra X-Ray Observatory",
+      "sourcePage": "https://images.nasa.gov/details/9907459",
+      "sourceAsset": "http://images-assets.nasa.gov/image/9907459/9907459~medium.jpg",
+      "institution": "MSFC",
+      "credit": "NASA/CXC/SAO/Rutgers/J.Hughes",
+      "license": "Educational/informational reuse under NASA Media Usage Guidelines; partner credits retained. No endorsement implied.",
+      "licenseUrl": "https://www.nasa.gov/nasa-brand-center/images-and-media/",
+      "processing": "Resized to at most1024px, encoded WebP quality86; source color retained. Square crop inside an individual jigsaw silhouette.",
+      "requiredAttribution": "NASA/CXC/SAO/Rutgers/J.Hughes",
+      "localFilename": "assets/entrance-casa.webp"
+    },
+    {
+      "ids": [
+        "enceladus"
+      ],
+      "file": "assets/entrance-enceladus.webp",
+      "subject": "Cassini Views Enceladus Up-Close",
+      "title": "Cassini Views Enceladus Up-Close",
+      "sourcePage": "https://images.nasa.gov/details/PIA06190",
+      "sourceAsset": "http://images-assets.nasa.gov/image/PIA06190/PIA06190~orig.jpg",
+      "institution": "JPL",
+      "credit": "NASA/JPL/Space Science Institute",
+      "license": "Educational/informational reuse under NASA Media Usage Guidelines; partner credits retained. No endorsement implied.",
+      "licenseUrl": "https://www.nasa.gov/nasa-brand-center/images-and-media/",
+      "processing": "Resized to at most1024px, encoded WebP quality86; source color retained. Square crop inside an individual jigsaw silhouette.",
+      "requiredAttribution": "NASA/JPL/Space Science Institute",
+      "localFilename": "assets/entrance-enceladus.webp"
+    },
+    {
+      "ids": [
+        "europa"
+      ],
+      "file": "assets/entrance-europa.webp",
+      "subject": "Highest-resolution Europa Image & Mosaic from Galileo",
+      "title": "Highest-resolution Europa Image & Mosaic from Galileo",
+      "sourcePage": "https://images.nasa.gov/details/PIA21431",
+      "sourceAsset": "http://images-assets.nasa.gov/image/PIA21431/PIA21431~medium.jpg",
+      "institution": "JPL",
+      "credit": "NASA/JPL-Caltech",
+      "license": "Educational/informational reuse under NASA Media Usage Guidelines; partner credits retained. No endorsement implied.",
+      "licenseUrl": "https://www.nasa.gov/nasa-brand-center/images-and-media/",
+      "processing": "Resized to at most1024px, encoded WebP quality86; source color retained. Square crop inside an individual jigsaw silhouette.",
+      "requiredAttribution": "NASA/JPL-Caltech",
+      "localFilename": "assets/entrance-europa.webp"
+    },
+    {
+      "ids": [
+        "titan"
+      ],
+      "file": "assets/entrance-titan.webp",
+      "subject": "Titan Viewed by Cassini Radar",
+      "title": "Titan Viewed by Cassini Radar",
+      "sourcePage": "https://images.nasa.gov/details/PIA08110",
+      "sourceAsset": "http://images-assets.nasa.gov/image/PIA08110/PIA08110~medium.jpg",
+      "institution": "JPL",
+      "credit": "NASA/JPL-Caltech/ASI",
+      "license": "Educational/informational reuse under NASA Media Usage Guidelines; partner credits retained. No endorsement implied.",
+      "licenseUrl": "https://www.nasa.gov/nasa-brand-center/images-and-media/",
+      "processing": "Resized to at most1024px, encoded WebP quality86; source color retained. Square crop inside an individual jigsaw silhouette.",
+      "requiredAttribution": "NASA/JPL-Caltech/ASI",
+      "localFilename": "assets/entrance-titan.webp"
+    },
+    {
+      "ids": [
+        "juno"
+      ],
+      "file": "assets/entrance-juno.webp",
+      "subject": "Juno Over Jupiter's South Pole (Illustration)",
+      "title": "Juno Over Jupiter's South Pole (Illustration)",
+      "sourcePage": "https://images.nasa.gov/details/PIA21771",
+      "sourceAsset": "http://images-assets.nasa.gov/image/PIA21771/PIA21771~medium.jpg",
+      "institution": "JPL",
+      "credit": "NASA/JPL-Caltech",
+      "license": "Educational/informational reuse under NASA Media Usage Guidelines; partner credits retained. No endorsement implied.",
+      "licenseUrl": "https://www.nasa.gov/nasa-brand-center/images-and-media/",
+      "processing": "Resized to at most1024px, encoded WebP quality86; source color retained. Square crop inside an individual jigsaw silhouette.",
+      "requiredAttribution": "NASA/JPL-Caltech",
+      "localFilename": "assets/entrance-juno.webp"
+    },
+    {
+      "ids": [
+        "cluster"
+      ],
+      "file": "assets/entrance-cluster.webp",
+      "subject": "Hubble Revisits a Globular Cluster’s Age",
+      "title": "Hubble Revisits a Globular Cluster’s Age",
+      "sourcePage": "https://images.nasa.gov/details/GSFC_20171208_Archive_e001017",
+      "sourceAsset": "http://images-assets.nasa.gov/image/GSFC_20171208_Archive_e001017/GSFC_20171208_Archive_e001017~medium.jpg",
+      "institution": "GSFC",
+      "credit": "ESA and NASA   ",
+      "license": "Educational/informational reuse under NASA Media Usage Guidelines; partner credits retained. No endorsement implied.",
+      "licenseUrl": "https://www.nasa.gov/nasa-brand-center/images-and-media/",
+      "processing": "Resized to at most1024px, encoded WebP quality86; source color retained. Square crop inside an individual jigsaw silhouette.",
+      "requiredAttribution": "ESA and NASA   ",
+      "localFilename": "assets/entrance-cluster.webp"
+    },
+    {
+      "ids": [
+        "horsehead"
+      ],
+      "file": "assets/entrance-horsehead.webp",
+      "subject": "Horsehead Nebula",
+      "title": "Horsehead Nebula",
+      "sourcePage": "https://images.nasa.gov/details/GSFC_20171208_Archive_e001518",
+      "sourceAsset": "http://images-assets.nasa.gov/image/GSFC_20171208_Archive_e001518/GSFC_20171208_Archive_e001518~medium.jpg",
+      "institution": "GSFC",
+      "credit": "NASA, ESA, and the Hubble Heritage Team (STScI/AURA)",
+      "license": "Educational/informational reuse under NASA Media Usage Guidelines; partner credits retained. No endorsement implied.",
+      "licenseUrl": "https://www.nasa.gov/nasa-brand-center/images-and-media/",
+      "processing": "Resized to at most1024px, encoded WebP quality86; source color retained. Square crop inside an individual jigsaw silhouette.",
+      "requiredAttribution": "NASA, ESA, and the Hubble Heritage Team (STScI/AURA)",
+      "localFilename": "assets/entrance-horsehead.webp"
+    },
+    {
+      "ids": [
+        "eagle"
+      ],
+      "file": "assets/entrance-eagle.webp",
+      "subject": "The Eagle Nebula Observed by WISE",
+      "title": "The Eagle Nebula Observed by WISE",
+      "sourcePage": "https://images.nasa.gov/details/PIA25433",
+      "sourceAsset": "http://images-assets.nasa.gov/image/PIA25433/PIA25433~medium.jpg",
+      "institution": "JPL",
+      "credit": "NASA/JPL-Caltech",
+      "license": "Educational/informational reuse under NASA Media Usage Guidelines; partner credits retained. No endorsement implied.",
+      "licenseUrl": "https://www.nasa.gov/nasa-brand-center/images-and-media/",
+      "processing": "Resized to at most1024px, encoded WebP quality86; source color retained. Square crop inside an individual jigsaw silhouette.",
+      "requiredAttribution": "NASA/JPL-Caltech",
+      "localFilename": "assets/entrance-eagle.webp"
     }
   ],
   "illustrations": {
-    "ids": ["coordinates", "sphere", "orbit", "parallax", "spectrum", "stars", "geometry", "cosmicweb"],
+    "ids": [
+      "coordinates",
+      "sphere",
+      "orbit",
+      "parallax",
+      "spectrum",
+      "stars",
+      "geometry",
+      "cosmicweb"
+    ],
     "credit": "Original PISCES Canvas illustrations",
     "notes": "Coordinate grids, the unnamed asterism, spectral pattern, orbital geometry and cosmic-web network are schematic, not measured datasets. Photo-loading fallbacks are labeled schematic or study and do not claim to be observatory photographs."
   }

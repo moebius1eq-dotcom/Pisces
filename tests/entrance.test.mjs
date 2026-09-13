@@ -14,8 +14,8 @@ const edgeLength = outline.length / 4;
 const edges = Array.from({ length: 4 }, (_, i) => outline.slice(i * edgeLength, (i + 1) * edgeLength));
 const completeTimeline = createEntranceTimeline();
 completeTimeline.ready();
-const complete = completeTimeline.step(13300);
-const waiting = createEntranceTimeline().step(9500);
+const complete = completeTimeline.step(14700);
+const waiting = createEntranceTimeline().step(10900);
 const key = fragments.find(fragment => fragment.id === 'key');
 const cleanContour = outline.filter((point, i) => !i || distance(point, outline[i - 1]) > 1e-12);
 if (distance(cleanContour[0], cleanContour.at(-1)) < 1e-12) cleanContour.pop();
@@ -106,7 +106,7 @@ test('authored encounters retain readable astronomy content at multiple depths',
   assert.equal(heroes.length, 23);
   assert.equal(new Set(heroes.map(fragment => fragment.hero)).size, 23);
   const content = new Set(heroes.map(fragment => fragment.content));
-  for (const name of ['earth', 'moon', 'saturn', 'galaxy', 'nebula', 'blackhole', 'telescope', 'cosmicweb', 'coordinates']) assert.ok(content.has(name));
+  for (const name of ['earth', 'enceladus', 'saturn', 'galaxy', 'nebula', 'blackhole', 'telescope', 'cosmicweb', 'coordinates']) assert.ok(content.has(name));
   assert.ok(Math.max(...heroes.map(fragment => fragment.station[2])) - Math.min(...heroes.map(fragment => fragment.station[2])) > 50);
   assert.ok(heroes.every(fragment => fragment.id !== 'key'));
 });
@@ -118,7 +118,9 @@ test('the readiness hold leaves an actual empty center with every other piece al
     const pose = fragmentPose(fragment, waiting);
     if (pose.opacity === 0) hidden++;
     if (fragment.id === 'key') {
-      assert.equal(pose.opacity, 0);
+      assert.equal(pose.opacity, 1);
+      assert.ok(pose.position[2] > 5);
+      assert.ok(pose.position[0] > 2);
       continue;
     }
     assert.equal(pose.opacity, 1);
@@ -129,7 +131,7 @@ test('the readiness hold leaves an actual empty center with every other piece al
     const translated = cleanContour.map(([x, y]) => [x + pose.position[0], y + pose.position[1]]);
     assert.equal(inside([0, 0], translated), false, `${fragment.id} occludes the central gap`);
   }
-  assert.equal(hidden, 1);
+  assert.equal(hidden, 0);
 });
 
 test('final identity has exactly aligned targets without residual rotations or scale', () => {
@@ -149,8 +151,8 @@ test('final identity has exactly aligned targets without residual rotations or s
 test('the arriving key seats completely before the restrained neighbor response', () => {
   const timeline = createEntranceTimeline();
   timeline.ready();
-  timeline.step(9500);
-  assert.equal(fragmentPose(key, timeline.step(0)).opacity, 0);
+  timeline.step(10900);
+  assert.equal(fragmentPose(key, timeline.step(0)).opacity, 1);
   const arriving = fragmentPose(key, timeline.step(700));
   assert.equal(arriving.opacity, 1);
   assert.ok(arriving.position[2] > 1);
@@ -194,8 +196,8 @@ test('reduced motion holds a motionless assembled gap and then resolves the iden
 test('all piece transforms remain finite across actual timeline phases and the loading hold', () => {
   const timeline = createEntranceTimeline();
   const seen = new Set();
-  for (let i = 0; i < 600; i++) {
-    if (i === 400) timeline.ready();
+  for (let i = 0; i < 680; i++) {
+    if (i === 480) timeline.ready();
     const frame = timeline.step(25);
     seen.add(frame.state);
     for (const fragment of fragments) {
@@ -228,9 +230,8 @@ test('near and far fields are reproducible, distinct, varied in depth, and tied 
       assert.ok([...item.position, ...item.target, ...item.turn, item.scale, item.seed].every(Number.isFinite));
       assert.ok(item.scale > 0 && item.seed >= 0 && item.seed < 1);
       assert.ok(CONTENT.includes(item.content));
-      const target = fragments[item.index % fragments.length].center;
-      assert.deepEqual(item.target.slice(0, 2), target);
-      assert.ok(item.target[2] <= -2 && item.target[2] >= -12);
+      assert.deepEqual(item.target, [...item.center, 0]);
+      assert.ok(Math.abs(item.center[0]) > 24 || Math.abs(item.center[1]) > 12.8);
     }
   }
   assert.ok(Math.min(...farField.map(item => item.position[2])) < -190);
