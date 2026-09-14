@@ -65,6 +65,8 @@ http://localhost:8000
 
 ## Credits
 
+Codex for heavy coding
+
 ### Libraries
 - Three.js 0.170.0 — MIT License
   - License included in `vendor/three.LICENSE`
