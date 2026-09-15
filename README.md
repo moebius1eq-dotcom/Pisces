@@ -1,6 +1,9 @@
 # Pisces is a interactive astronomy website I made to make learning and exploring astronomy more interesting and visual. 
 ## Why?
 I thought of this website mainly because of the pain in my astronomy class and the environment and location I live in. I live in a very polluted area so its very difficult for me to see any stars at night and I can only see like a few, BUT that's at like around 1am and I am NOT staying up that late. I also am taking astronomy and astrophysics classes because that is what I think I will pursuit, however a lot of concepts require calc and trig and I kind of suck at that so it took me a very VERY long time to be able to understand concepts. (I suck at trig) Furthermore, a lot of the concepts are SUPER abstract. I also think there are not a lot of websites that are interesting and cool enough to encourage people to start exploring astronomy as a hobby or maybe a major. I feel the topic seems so daunting to people they just skip over it. which I get but like bruh.
+
+## How? 
+Well, first of all, I have zero to little experience in coding. Learned a bit of Java and HTML but I suck in general. I also have school so am super busy and well I try and use AI to teach me. For this website, I really wanted to build it myself BUT I was under a time crunch AND I didn't want to lose this idea. Sooooo, yeah. Not proud of myself...but I feel this would be a good way for me to learn and to see how things work.
 ## My goals
 - Cool entrance
 - Interactive planets
@@ -34,6 +37,9 @@ I used a lot of AI for coding mainly because I am still learning and a lot of th
 ### Data
 - Planetary physical data:
   NASA/JPL Solar System Dynamics
+
+## Extra Stuff
+P.S. I'm new to hackclub :)
 
 For detailed image source links and attribution information, see:
 - `assets/entrance-sources.json`
