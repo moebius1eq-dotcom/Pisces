@@ -1,3 +1,17 @@
 body {
-    background-color: #00008B;
+    background-color: #FFFFFF;
+    text-align: center;
+    color: #000000;
+}
+.planet-card {
+    background-color: #FFFFFF;
+    width: 300px;
+    border: 5px solid #000000;
+    padding: 5px;
+    margin: 10px auto;
+    height: 500px;
+}
+.planet-card img {
+    width: 100%;
+    height: 70%;
 }
