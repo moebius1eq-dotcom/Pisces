@@ -1,7 +1,10 @@
+
 body {
-    background-color: #FFFFFF;
+    margin: 0;
     text-align: center;
-    color: #000000;
+    background: #000000;
+    font-family: Papyrus, fantasy;
+    color: #FFFFFF;
 }
 .planet-card {
     background-color: #FFFFFF;
@@ -14,4 +17,57 @@ body {
 .planet-card img {
     width: 100%;
     height: 70%;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    padding: 20px;
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 5px;
+    background-color: #000000;
+    height: 75px;
+    padding: 0 15px;
+
+}
+
+.navbar h1 {
+    font-size: 25px;
+}
+
+.hero {
+    display: flex;
+    flex-direction: column;
+    min-height: 80vh;
+    justify-content: center;
+}
+
+.hero h1 {
+    font-size: 100px;
+    margin: 0;
+}
+
+.hero p {
+    margin: 10px 0 0;
+}
+
+.down-arrow {
+    font-size: 2rem;
+    animation: bounce 1.5s infinite;
+}
+
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(10px);
+    }
 }
