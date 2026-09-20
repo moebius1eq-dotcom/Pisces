@@ -48,10 +48,8 @@ body {
 
 .hero {
     min-height: calc(100vh - 75px);
-
     display: flex;
     flex-direction: column;
-    min-height: 80vh;
     justify-content: center;
 }
 
@@ -72,7 +70,6 @@ html {
     color: white;
     text-decoration: none;
     margin-top: 25px;
-
     animation: bounce 1.5s infinite;
 }
 
@@ -80,24 +77,79 @@ html {
     0%, 100% {
         transform: translateY(0);
     }
-
     50% {
         transform: translateY(12px);
     }
 }
 
 .hamburger {
+    width: 50px;
+    height: 50px;
     display: flex;
     flex-direction: column;
-    gap: 6px;
-
-    background: none;
-    border: none;
+    justify-content: center;
+    align-items: center;
+    gap: 7px;
     cursor: pointer;
 }
 
 .hamburger span {
     width: 30px;
-    height: 2px;
+    height: 3px;
     background-color: white;
+    border-radius: 25px;
+    transition: 0.3s ease;
+}
+
+.hamburger.active span:nth-child(1) {
+    top: 50%;
+    transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.hamburger.active span:nth-child(2) {
+    opacity: 0;
+}
+
+.hamburger.active span:nth-child(3) {
+    top: 50%;
+    transform: translate(-50%, 50%) rotate(-45deg);
+}
+.off-screen-menu {
+    background-color: #171922;
+    height: 100vh;
+    width: 400px;
+    position: fixed;
+    top: 0;
+    right: -400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: right 0.4s ease;
+    z-index: 10;
+}
+
+.off-screen-menu ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    width: 80%;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    text-align: left;
+}
+
+.off-screen-menu li {
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    gap: 25px;
+}
+
+.off-screen-menu li span {
+    font-size: 14px;
+    opacity: 0.5;
+}
+.off-screen-menu.active {
+    right: 0;
 }
