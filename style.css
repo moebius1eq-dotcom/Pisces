@@ -6,10 +6,15 @@ body {
     font-family: Papyrus, fantasy;
     color: #FFFFFF;
 }
+
+.planets {
+    min-height: 100vh;
+    padding: 80px 40px;
+}
 .planet-card {
-    background-color: #FFFFFF;
+    background-color: #000000;
     width: 300px;
-    border: 5px solid #000000;
+    border: 5px solid #FFFFFF;
     padding: 5px;
     margin: 10px auto;
     height: 500px;
@@ -42,6 +47,8 @@ body {
 }
 
 .hero {
+    min-height: calc(100vh - 75px);
+
     display: flex;
     flex-direction: column;
     min-height: 80vh;
@@ -56,8 +63,16 @@ body {
 .hero p {
 }
 
+html {
+    scroll-behavior: smooth;
+}
+
 .down-arrow {
-    font-size: 2rem;
+    font-size: 40px;
+    color: white;
+    text-decoration: none;
+    margin-top: 25px;
+
     animation: bounce 1.5s infinite;
 }
 
@@ -67,6 +82,22 @@ body {
     }
 
     50% {
-        transform: translateY(10px);
+        transform: translateY(12px);
     }
+}
+
+.hamburger {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.hamburger span {
+    width: 30px;
+    height: 2px;
+    background-color: white;
 }
