@@ -2,10 +2,12 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Pisces</title>
         <link rel="stylesheet" href="style.css">
     </head>
     <body>
+        <!-- Navigation -->
         <section>
             <div class="navbar">
                 <div class="Pisces">
@@ -27,13 +29,14 @@
                         </li>
                     </ul>
                 </div>
-                <div class="hamburger">
+                <button class="hamburger" type="button" aria-label="Open menu" aria-expanded="false">
                     <span></span>
                     <span></span>
                     <span></span>
-                </div>
+                </button>
             </div>
         </section>
+        <!-- Hero -->
         <section>
             <div class="hero">
                 <h1>PISCES</h1>
@@ -41,24 +44,90 @@
                 <a href="#planets" class="down-arrow">↓</a>
             </div>
         </section>
+        <section class="news-section">
+            <h2>Latest Article</h2>
+            <article class="featured-card">
+                <div class="card-image">
+                    <img src="images/caseclosed.png" alt="Recent Article">
+                </div>
+                <div class="card-content">
+                    <span class="card-badge">Newest</span>
+                    <h2 class="card-title">
+                        <a href="https://www.astronomy.com/science/case-closed-on-long-standing-space-weather-mystery/" target="_blank" rel="noopener" class="card-link">Case closed on long-standing space weather mystery<a>
+                    </h2>
+                    <p class="card-description">
+                        A 155-year-old typo made an 1848 train delay in England look like the earliest case of space weather disrupting technology. New research sets the record straight.
+                    </p>
+                    <div class="card-meta">
+                        <span class="author">By Brooks Mendenhall</span>
+                        <span class="source-attribution">via <a href="https://www.astronomy.com/" target="_blank" rel="noopener">Astronomy Magazine</a></span>
+                        <time datetime="2026-10-06">Oct 6, 2026</time>
+                    </div>
+                </div>
+            </article>
+        </section>
+        <section>
+
+        </section>
+        <!-- Planets -->
         <section class="planets" id="planets">
+            <h1 class="planets-title">Explore the Planets</h1>
 
-            <h2>Explore the Planets</h2>
-
-            <div class="grid-container">
+            <div class="planet-track">
 
                 <div class="planet-card">
+                    <h2>Mercury</h2>
+                    <p>This is Mercury.</p>
+                    <img src="images/mercury.jpeg" alt="Mercury image">
+                </div>
+
+                <div class="planet-card">
+                    <h2>Venus</h2>
+                    <p>This is Venus.</p>
+                    <img src="images/venus.jpeg" alt="Venus image">
+                </div>
+
+                <div class="planet-card" id="earth-card">
                     <h2>Earth</h2>
                     <p>This is Earth.</p>
-                    <img src="coolearth.jpg">
+                    <img src="images/coolearth.jpg" alt="Earth image">
                 </div>
 
                 <div class="planet-card">
                     <h2>Mars</h2>
                     <p>This is Mars.</p>
-                    <img src="coolmars.jpg">
+                    <img src="images/coolmars.jpg" alt="Mars image">
                 </div>
 
+                <div class="planet-card">
+                    <h2>Jupiter</h2>
+                    <p>This is Jupiter.</p>
+                    <img src="images/jupiter.jpeg" alt="Jupiter image">
+                </div>
+
+                <div class="planet-card">
+                    <h2>Saturn</h2>
+                    <p>This is Saturn.</p>
+                    <img src="images/saturn.jpeg" alt="Saturn image">
+                </div>
+
+                <div class="planet-card">
+                    <h2>Uranus</h2>
+                    <p>This is Uranus.</p>
+                    <img src="images/uranus.jpeg" alt="Uranus image">
+                </div>
+
+                <div class="planet-card">
+                    <h2>Neptune</h2>
+                    <p>This is Neptune.</p>
+                    <img src="images/neptune.jpeg" alt="Neptune image">
+                </div>
+
+                <div class="planet-card">
+                    <h2>Pluto</h2>
+                    <p>This is Pluto.</p>
+                    <img src="images/pluto.jpeg" alt="Pluto image">
+                </div>
             </div>
 
         </section>
