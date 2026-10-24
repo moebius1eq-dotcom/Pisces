@@ -593,18 +593,41 @@ body {
 .modal-content {
     background: #ffffff;
     color: #000000;
-    padding: 2rem;
+    padding: 10px;
     border-radius: 10px;
     max-width: 600px;
     width: 90%;
     text-align: center;
     position: relative;
+    width: 1300px;
+    height: 800px;
+    display: flex;
+    flex-direction: row;
 }
 
 .modal-content img {
-    max-width: 100%;
+    max-width: 10%;
     height: auto;
     margin-bottom: 1rem;
+}
+
+.modal-img-side {
+    flex: 1;
+}
+
+.modal-img-side img {
+    max-width: 100%;
+    height: auto;
+    width: 100%;
+    object-fit: cover;
+}
+
+.modal-info-side {
+    flex: 1;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 #close-modal {
