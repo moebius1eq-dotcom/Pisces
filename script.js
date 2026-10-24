@@ -14,3 +14,16 @@ hamburger.addEventListener("click", () => {
     hamburger.classList.toggle("active");
     offScreenMenu.classList.toggle("active");
 });
+
+document.querySelectorAll(".planet-card").forEach(card => {
+    card.addEventListener("click", () => {
+        document.getElementById('modal-title').textContent = card.querySelector("h2").textContent;
+        document.getElementById('modal-desc').textContent = card.querySelector("p").textContent;
+        document.getElementById('modal-img').src = card.querySelector("img").src;
+        document.getElementById('modal').classList.remove("hidden");
+    });
+});
+
+document.getElementById('close-modal').addEventListener("click", () => {
+    document.getElementById('modal').classList.add("hidden");
+});
