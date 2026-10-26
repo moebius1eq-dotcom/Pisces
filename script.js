@@ -35,7 +35,7 @@ document.querySelectorAll(".planet-card").forEach(card => {
         ];
 
         const descEL = document.getElementById('modal-description');
-        descEl.innerHTML = `
+        descEL.innerHTML = `
             <div class="stat-grid">
                 ${stats.map(([label, val]) => `
                 <div class="stat-item">
