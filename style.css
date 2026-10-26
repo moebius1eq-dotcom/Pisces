@@ -599,9 +599,29 @@ body {
     text-align: center;
     position: relative;
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     width: 800px;
     height: 500px;
+    max-height: 90vh;
+    overflow: hidden;
+}
+
+.modal-main {
+    display: flex;
+    flex-direction: row;
+    flex: 1;
+    height: 460px;
+}
+
+.modal-fun-fact-bar {
+    background: #171922;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    padding: 0.6rem 1.5rem;
+    font-size: 0.85rem;
+    font-style: italic;
+    opacity: 0.75;
+    text-align: center;
+    color: #ffffff;
 }
 
 .modal-content img {

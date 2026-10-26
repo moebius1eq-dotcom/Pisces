@@ -44,8 +44,8 @@ document.querySelectorAll(".planet-card").forEach(card => {
                 </div>
                 `).join('')}
             </div>
-            <p class="fun-fact">✦ ${card.dataset.funFact}</p>
         `;
+        document.getElementById('modal-fun-fact').textContent = `✦ ${card.dataset.funFact}`;
     });
 });
 
