@@ -1,7 +1,17 @@
 const hamburger = document.querySelector(".hamburger");
 const offScreenMenu = document.querySelector(".off-screen-menu");
+
+hamburger.addEventListener("click", () => {
+    const isExpanded = hamburger.getAttribute("aria-expanded") === "true";
+    hamburger.setAttribute("aria-expanded", !isExpanded);
+    hamburger.classList.toggle("active");
+    offScreenMenu.classList.toggle("active");
+});
+
 const track = document.querySelector(".planet-track");
-const cards = Array.from(track.children);
+
+if (track) {
+    const cards = Array.from(track.children);
 
 cards.forEach(card => {
     const clone = card.cloneNode(true);
@@ -10,7 +20,6 @@ cards.forEach(card => {
 
 hamburger.addEventListener("click", () => {
     const isExpanded = hamburger.getAttribute("aria-expanded") === "true";
-    hamburger.setAttribute("aria-expanded", "!isExpanded");
     hamburger.classList.toggle("active");
     offScreenMenu.classList.toggle("active");
 });
@@ -54,3 +63,4 @@ document.querySelectorAll(".planet-card").forEach(card => {
 document.getElementById('close-modal').addEventListener("click", () => {
     document.getElementById('modal').classList.add("hidden");
 });
+}
