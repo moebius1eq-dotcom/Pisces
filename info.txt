@@ -1,0 +1,26 @@
+Mercury:
+Mass: 3.30 × 10²³ kg · Radius: 2,439 km · Distance from Sun: 0.39 AU · Moons: 0 · Temp: -180°C to 430°C · Composition: Iron core, silicate mantle · Axial Tilt: 0.034° · Orbital Period: 88 days · A day on Mercury is longer than its year
+
+Venus: 
+Mass: 4.87 × 10²⁴ kg · Radius: 6,051 km · Distance from Sun: 0.72 AU · Moons: 0 · Temp: 465°C average · Composition: CO₂ atmosphere, silicate rock · Axial Tilt: 177.4° (spins backwards) · Orbital Period: 225 days · Hottest planet despite not being closest to the Sun
+
+Earth:
+Mass: 5.97 × 10²⁴ kg · Radius: 6,371 km · Distance from Sun: 1.00 AU · Moons: 1 · Temp: -88°C to 58°C · Composition: Iron core, silicate mantle, nitrogen-oxygen atmosphere · Axial Tilt: 23.5° · Orbital Period: 365.25 days · Only known planet to harbor life
+
+Mars:
+Mass: 6.39 × 10²³ kg · Radius: 3,389 km · Distance from Sun: 1.52 AU · Moons: 2 (Phobos, Deimos) · Temp: -125°C to 20°C · Composition: Iron oxide surface, thin CO₂ atmosphere · Axial Tilt: 25.2° · Orbital Period: 687 days · Home to Olympus Mons, the tallest volcano in the solar system at 21 km
+
+Jupiter:
+Mass: 1.90 × 10²⁷ kg · Radius: 69,911 km · Distance from Sun: 5.20 AU · Moons: 95 · Temp: -110°C cloud tops · Composition: 90% hydrogen, 10% helium · Axial Tilt: 3.1° · Orbital Period: 11.9 years · The Great Red Spot is a storm larger than Earth that has raged for 350+ years
+
+Saturn:
+Mass: 5.68 × 10²⁶ kg · Radius: 58,232 km · Distance from Sun: 9.58 AU · Moons: 146 · Temp: -140°C average · Composition: Hydrogen and helium · Axial Tilt: 26.7° · Orbital Period: 29.5 years · Least dense planet — it would float on water · Rings span 282,000 km but are only ~10m thick
+
+Uranus:
+Mass: 8.68 × 10²⁵ kg · Radius: 25,362 km · Distance from Sun: 19.2 AU · Moons: 27 · Temp: -224°C (coldest planetary atmosphere) · Composition: Water, methane, ammonia ices · Axial Tilt: 97.8° (orbits on its side) · Orbital Period: 84 years · Its extreme tilt means each pole gets 42 years of sunlight then 42 years of darkness
+
+Neptune:
+Mass: 1.02 × 10²⁶ kg · Radius: 24,622 km · Distance from Sun: 30.1 AU · Moons: 16 · Temp: -214°C average · Composition: Water, ammonia, methane ices · Axial Tilt: 28.3° · Orbital Period: 165 years · Winds reach 2,100 km/h — fastest in the solar system · Was mathematically predicted before it was observed
+
+Pluto:
+Mass: 1.30 × 10²² kg · Radius: 1,188 km · Distance from Sun: 39.5 AU · Moons: 5 (Charon, Styx, Nix, Kerberos, Hydra) · Temp: -233°C average · Composition: Rock and water ice · Axial Tilt: 122.5° · Orbital Period: 248 years · Charon is so large relative to Pluto they orbit each other · Reclassified as a dwarf planet in 2006
