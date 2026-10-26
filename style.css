@@ -653,7 +653,7 @@ body {
 }
 
 .modal-inner h2 {
-    margin: 0;
+    margin: 0 0 1rem;
     font-size: 2rem;
 }
 
@@ -714,5 +714,8 @@ body {
     text-align: center;
     border-top: 1px solid rgba(255,255,255,0.1);
     padding-top: 0.5rem;
+}
+
+.fun-fact-item {
     grid-column: span 2;
 }

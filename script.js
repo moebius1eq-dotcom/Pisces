@@ -31,7 +31,6 @@ document.querySelectorAll(".planet-card").forEach(card => {
             ["Composition", card.dataset.composition],
             ["Axial Tilt", card.dataset.tilt],
             ["Orbital Period", card.dataset.orbitalPeriod],
-            ["Fun Fact", card.dataset.funFact],
         ];
 
         const descEL = document.getElementById('modal-description');
