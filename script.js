@@ -58,3 +58,16 @@ if (track) {
         document.getElementById('modal').classList.add("hidden");
     });
 }
+
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) entry.target.classList.add("visible"); 
+    });
+}, { threshold: 0.15 });
+
+document.querySelectorAll('.about-section, .news-section').forEach(el => {
+    el.style.opacity = 0;
+    el.style.transform = "translateY(30px)";
+    el.style.transition = "opacity 0.6s ease-out, transform 0.6s ease-out";
+    observer.observe(el);
+});

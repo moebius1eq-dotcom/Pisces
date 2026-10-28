@@ -14,7 +14,7 @@ body {
     margin: 0;
     text-align: center;
     background: #000000;
-    font-family: SansSerif, sans-serif;
+    font-family: Space Grotesk, sans-serif;
     color: #ffffff;
     overflow-x: hidden;
 }
@@ -205,8 +205,8 @@ body {
 .featured-card {
     display: flex;
     flex-direction: column; 
-    background: #ffffff;
-    border: 1px solid #e2e8f0;
+    background: #171922;
+    border: 1px solid #000000;
     border-radius: 12px;
     overflow: hidden;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
@@ -251,7 +251,7 @@ body {
 }
 
 .card-link {
-    color: #1a202c;
+    color: #ffffff;
     text-decoration: none;
 }
 
@@ -269,7 +269,7 @@ body {
     display: flex;
     justify-content: space-between;
     font-size: 0.875rem;
-    color: #718096;
+    color: #ffffff;
     border-top: 1px solid #edf2f7;
     padding-top: 1rem;
 }
@@ -310,7 +310,7 @@ body {
 }
 
 .planet-card {
-    background-color: #000000;
+    background-color: #ffffff;
     width: 350px;
     border: 5px solid #FFFFFF;
     padding: 5px;
@@ -347,9 +347,9 @@ body {
 .planet-track > div {
     border: 2px solid #ffffff;
     border-radius: 30px;
-    background-color: #ffffff;
+    background-color: #0b0c11;
     padding: 2rem;
-    color: #000000;
+    color: #ffffff;
 }
 
 /* =========================
@@ -594,11 +594,14 @@ body {
     justify-content: center;
     align-items: center;
     z-index: 1000;
+    pointer-events: auto;
+    opacity: 1;
+    transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
 .modal-content {
-    background: #ffffff;
-    color: #000000;
+    background: #0b0c11;
+    color: #ffffff;
     border-radius: 10px;
     text-align: center;
     position: relative;
@@ -607,6 +610,8 @@ body {
     width: 800px;
     height: 500px;
     overflow: hidden;
+    transform: scale(1);
+    transition: transform 0.3s ease;
 }
 
 
@@ -681,7 +686,8 @@ body {
 }
 
 .hidden {
-    display: none;
+    opacity: 0;
+    pointer-events: none;
 }
 
 .stat-grid {
@@ -726,4 +732,9 @@ body {
 
 .fun-fact-item {
     grid-column: span 2;
+}
+
+.visible {
+    opacity: 1 !important;
+    transform: translateY(0) !important;
 }
