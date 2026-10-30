@@ -1,13 +1,5 @@
 const hamburger = document.querySelector(".hamburger");
 const offScreenMenu = document.querySelector(".off-screen-menu");
-
-hamburger.addEventListener("click", () => {
-    const isExpanded = hamburger.getAttribute("aria-expanded") === "true";
-    hamburger.setAttribute("aria-expanded", !isExpanded);
-    hamburger.classList.toggle("active");
-    offScreenMenu.classList.toggle("active");
-});
-
 const track = document.querySelector(".planet-track");
 
 if (track) {
@@ -70,4 +62,20 @@ document.querySelectorAll('.about-section, .news-section').forEach(el => {
     el.style.transform = "translateY(30px)";
     el.style.transition = "opacity 0.6s ease-out, transform 0.6s ease-out";
     observer.observe(el);
+});
+
+hamburger.addEventListener("click", () => {
+    const isExpanded = hamburger.getAttribute("aria-expanded") === "true";
+    hamburger.setAttribute("aria-expanded", !isExpanded);
+    hamburger.classList.toggle("active");
+
+    if (offScreenMenu.classList.contains("active")) {
+        offScreenMenu.classList.remove("active");
+        offScreenMenu.classList.add("closing");
+
+        setTimeout(() => offScreenMenu.classList.remove("closing"), 1000);
+    } else {
+        offScreenMenu.classList.remove("closing");
+        offScreenMenu.classList.add("active");
+    }
 });
