@@ -79,3 +79,47 @@ hamburger.addEventListener("click", () => {
         offScreenMenu.classList.add("active");
     }
 });
+
+document.querySelectorAll('.off-screen-menu a').forEach(link => {
+    link.addEventListener('click', (e) => {
+        e.preventDefault(); 
+        
+        const href = link.getAttribute('href');
+        const menu = document.querySelector('.off-screen-menu');
+        const hamburger = document.querySelector('.hamburger');
+
+        menu.classList.add('closing');
+        menu.classList.remove('active');
+        hamburger.classList.remove('active');
+        hamburger.setAttribute('aria-expanded', 'false');
+
+        setTimeout(() => {
+            menu.classList.remove('closing');
+            window.location.href = href; 
+        }, 800); 
+    });
+});
+
+const highlight = document.querySelector('.menu-highlight');
+const menuItems = document.querySelectorAll('.off-screen-menu li');
+
+function moveHighlight(li) {
+    const menuRect = document.querySelector('.off-screen-menu').getBoundingClientRect();
+    const liRect = li.getBoundingClientRect();
+    highlight.style.left = (liRect.left - menuRect.left) + 'px';
+    highlight.style.width = liRect.width + 'px';
+}
+
+document.querySelector('.hamburger').addEventListener('click', () => {
+    setTimeout(() => {
+        moveHighlight(menuItems[0]);
+    }, 50);
+});
+
+menuItems.forEach(li => {
+    li.addEventListener('mouseenter', () => moveHighlight(li));
+});
+
+document.querySelector('.off-screen-menu').addEventListener('mouseleave', () => {
+    moveHighlight(menuItems[0]);
+});
