@@ -2,11 +2,320 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #000; }
+
+        .journey-wrap {
+            height: 800vh;
+            position: relative;
+        }
+
+        .journey-sticky {
+            position: sticky;
+            top: 0;
+            height: 100vh;
+        }
+    </style>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Interactive Journey | Pisces</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div class="journey-wrap">
+        <div class="journey-sticky">
+            <canvas id="c"></canvas>
+        </div>
+    </div>
+    <script>
+            const canvas = document.getElementById('c');
+            const ctx = canvas.getContext('2d');
+            const wrap = document.querySelector('.journey-wrap');
 
+            function resize() {
+                canvas.width  = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+           window.addEventListener('resize', resize);
+           resize();
+
+            function getProgress() {
+                const scrollable = wrap.offsetHeight - window.innerHeight;
+                return Math.max(0, Math.min(1, window.scrollY / scrollable));
+            }
+
+            window.addEventListener('scroll', () => {
+                const p = getProgress();
+                const stageIndex    = Math.min(Math.floor(p * 8), 7);
+                const stageProgress = (p * 8) % 1;
+
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                if (stageIndex === 0) drawEarth();
+                if (stageIndex === 1) drawSolar1();
+                if (stageIndex === 2) drawSolarSystem();
+                if (stageIndex === 3) drawStars();
+            });
+
+            function drawEarth() {
+                const cx = canvas.width / 2;
+                const cy = canvas.height / 2;
+                const eR = Math.min(canvas.width, canvas.height) * 0.18;
+                const mR = eR * 0.27;
+                const gap = canvas.width * 0.26;
+
+                const ex = cx - gap * 0.35;
+                const mx = cx + gap * 0.65;
+
+                const eGlow= ctx.createRadialGradient(ex, cy, eR * 0.8, ex, cy, eR * 1.6);
+                eGlow.addColorStop(0, 'rgba(70, 150, 255, 0.15)');
+                eGlow.addColorStop(1, 'rgba(0, 0, 0, 0)');
+                ctx.beginPath();
+                ctx.arc(ex, cy, eR * 1.6, 0, Math.PI * 2);
+                ctx.fillStyle = eGlow;
+                ctx.fill();
+
+
+                const eg = ctx.createRadialGradient(ex - eR * 0.2, cy - eR * 0.2, eR * 0.05, ex, cy, eR);
+                eg.addColorStop(0, '#6bbfff');
+                eg.addColorStop(0.35, '#2f7cc2');
+                eg.addColorStop(0.7, '#1a4f8a');
+                eg.addColorStop(1, '#091d38');
+
+                ctx.beginPath();
+                ctx.arc(ex, cy, eR, 0, Math.PI * 2);
+                ctx.fillStyle = eg;
+                ctx.fill();
+
+                const mGlow = ctx.createRadialGradient(mx, cy, mR * 0.8, mx, cy, mR * 1.6);
+                mGlow.addColorStop(0, 'rgba(180, 180, 180, 0.08)');
+                mGlow.addColorStop(1, 'rgba(0, 0, 0, 0)');
+                ctx.beginPath();
+                ctx.arc(mx, cy, mR * 1.6, 0, Math.PI * 2);
+                ctx.fillStyle = mGlow;
+                ctx.fill();
+
+                const mg = ctx.createRadialGradient(mx - mR * 0.3, cy - mR * 0.3, mR * 0.05, mx, cy, mR);
+                mg.addColorStop(0, '#d8d8d8');
+                mg.addColorStop(0.5, '#888');
+                mg.addColorStop(1, '#2e2e2e');
+
+                ctx.beginPath();
+                ctx.arc(mx, cy, mR, 0, Math.PI * 2);
+                ctx.fillStyle = mg;
+                ctx.fill();
+
+            ctx.save();
+            ctx.setLineDash([4, 8]);
+            ctx.beginPath();
+            ctx.moveTo(ex + eR + 4, cy);
+            ctx.lineTo(mx - mR - 4, cy);
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+            ctx.restore();
+
+            ctx.textAlign = 'center';
+            ctx.font = '11px sans-serif';
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.35)';
+            ctx.fillText('384,400 KM', (ex + mx) / 2, cy - 14);
+
+            ctx.textAlign = 'left';
+            ctx.font = '10px sans-serif';
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+            ctx.fillText('EARTH', ex - 20, cy + eR +20);
+            ctx.fillText('MOON', mx - 14, cy + mR + 16);
+            }
+
+            function drawSolar1() {
+                const cx = canvas.width / 2;
+                const cy = canvas.height / 2;
+                const sR = Math.min(canvas.width, canvas.height) * 0.09;
+                const orbitR = Math.min(canvas.width, canvas.height) * 0.31;
+
+                const sg = ctx.createRadialGradient(cx, cy, sR * 0.4, cx, cy, sR * 3);
+                sg.addColorStop(0, 'rgba(255, 220, 80, 0.2)');
+                sg.addColorStop(0.3, 'rgba(0, 0, 0, 0)');
+                ctx.beginPath();
+                ctx.arc(cx, cy, sR * 3, 0, Math.PI * 2);
+                ctx.fillStyle = sg;
+                ctx.fill();
+
+                const sun = ctx.createRadialGradient(cx - sR * 0.3, cy - sR * 0.3, sR * 0.1, cx, cy, sR);
+                sun.addColorStop(0, '#fffbe0');
+                sun.addColorStop(0.3, '#ffd740');
+                sun.addColorStop(0.7, '#ff8c00');
+                sun.addColorStop(1, '#7a3800');
+                ctx.beginPath();
+                ctx.arc(cx, cy, sR, 0, Math.PI * 2);
+                ctx.fillStyle = sun;
+                ctx.fill();
+
+                ctx.save();
+                ctx.setLineDash([3, 7]);
+                ctx.beginPath();
+                ctx.arc(cx, cy, orbitR, 0, Math.PI * 2);
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.07)';
+                ctx.lineWidth = 1;
+                ctx.stroke();
+                ctx.restore();
+
+                const angle = -Math.PI / 2;
+                const ex = cx + Math.cos(angle) * orbitR;
+                const ey = cy + Math.sin(angle) * orbitR;
+
+                const eGlow = ctx.createRadialGradient(ex, ey, 0, ex, ey, 14);
+                eGlow.addColorStop(0, 'rgba(80, 160, 255, 0.4)');
+                eGlow.addColorStop(1, 'rgba(0, 0, 0, 0)');
+                ctx.beginPath();
+                ctx.arc(ex, ey, 14, 0, Math.PI * 2);
+                ctx.fillStyle = eGlow;
+                ctx.fill();
+
+                ctx.beginPath();
+                ctx.arc(ex, ey, 4, 0, Math.PI * 2);
+                ctx.fillStyle = '#5aacff';
+                ctx.fill();
+
+                ctx.textAlign = 'center';
+                ctx.font = '10px sans-serif';
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.35)';
+                ctx.fillText('1 AU · 149.6M KM', cx, cy - orbitR - 12);
+
+                ctx.textAlign = 'left';
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+                ctx.fillText('SUN', cx + sR + 8, cy - sR - 8);
+                ctx.fillText('EARTH', ex + 8, ey + 4);
+            }
+
+            function drawSolarSystem() {
+                const cx = canvas.width / 2;
+                const cy = canvas.height / 2;
+                const scale = Math.min(canvas.width, canvas.height) * 0.44;
+
+                const planets = [
+                    { name: 'MERCURY', au: 0.39, color: '#a8998c', r: 2.5, angle: 1.0 },
+                    { name: 'VENUS', au: 0.72, color: '#e8c97a', r: 3.2, angle: 0.5 },
+                    { name: 'EARTH', au: 1.00, color: '#5aacff', r: 3.5, angle: 2.2 },
+                    { name: 'MARS', au: 1.52, color: '#cc4411', r: 2.8, angle: 3.4 },
+                    { name: 'JUPITER', au: 5.20, color: '#c8884a', r: 7.0, angle: 0.9 },
+                    { name: 'SATURN', au: 9.58, color: '#e8d49a', r: 5.5, angle: 4.1 },
+                    { name: 'URANUS', au: 19.20, color: '#7de8e8', r: 4.2, angle: 1.7 },
+                    { name: 'NEPTUNE', au: 30.05, color: '#4466dd', r: 4.0, angle: 2.0 },
+                ];
+
+                const logMin = Math.log(0.3);
+                const logMax = Math.log(32);
+                function auToRadius(au) {
+                    return ((Math.log(au) - logMin) / (logMax - logMin)) * scale;
+                }
+
+                const sg = ctx.createRadialGradient(cx, cy, 4, cx, cy, 28);
+                sg.addColorStop(0, 'rgba(255, 230, 100, 0.35)');
+                sg.addColorStop(1, 'rgba(0, 0, 0, 0)');
+                ctx.beginPath();
+                ctx.arc(cx, cy, 28, 0, Math.PI * 2);
+                ctx.fillStyle = sg;
+                ctx.fill();
+
+                ctx.beginPath();
+                ctx.arc(cx, cy, 7, 0, Math.PI * 2);
+                ctx.fillStyle = '#ffe040';
+                ctx.fill();
+
+                for (const planet of planets) {
+                    const orbitR = auToRadius(planet.au);
+
+                    ctx.beginPath();
+                    ctx.arc(cx, cy, orbitR, 0, Math.PI * 2);
+                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+                    ctx.lineWidth = 1;
+                    ctx.stroke();
+
+                    const px = cx + Math.cos(planet.angle) * orbitR;
+                    const py = cy + Math.sin(planet.angle) * orbitR;
+
+                    ctx.beginPath();
+                    ctx.arc(px, py, planet.r, 0, Math.PI * 2);
+                    ctx.fillStyle = planet.color;
+                    ctx.fill();
+                }
+
+                ctx.textAlign = 'center';
+                ctx.font = '10px sans-serif';
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+                ctx.fillText('NEPTUNE · 30.1AU', cx, cy + auToRadius(30.1) + 16);
+            }
+
+            function drawStars() {
+                const cx = canvas.width / 2;
+                const cy = canvas.height / 2;
+                const scale = Math.min(canvas.width, canvas.height) * 0.38;
+
+                const nearStars = [
+                    { name: 'PROXIMA CENTAURI', ly: 4.24, angle: -0.6 },
+                    { name: 'ALPHA CENTAURI', ly: 4.37, angle: -0.25 },
+                    { name: 'BARNARDS STAR', ly: 5.96, angle: 1.8 },
+                    { name: 'WOFL 359', ly: 7.78, angle: 2.5 },
+                    { name: 'SIRIUS', ly: 8.60, angle: 0.75 },
+                    { name: 'EPSILON ERIDANI', ly: 10.5, angle: -1.9 },
+                    { name: 'TAU CETI', ly: 11.9, angle: 2.1 },
+                    { name: 'VEGA', ly: 25.0, angle: 0.2 },
+                ];
+
+                const maxLY = 28;
+
+                for (const ly of [5, 10, 20]) {
+                    const r = (ly / max LY) * scale;
+                    ctx.beginPath();
+                    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.04)';
+                    ctx.lineWidth = 1;
+                    ctx.stroke();
+
+                    ctx.textAlign = 'left';
+                    ctx.font = '9px sans-serif';
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+                    ctx.fillText(ly + ' LY', cx + r + 5, cy + 3);
+                }
+
+                for (const star of nearStars) {
+                    const r = (star.ly / maxLY) * scale;
+                    const sx = cx + Math.cos(star.angle) * r;
+                    const sy = cy + Math.sin(star.angle) * r;
+
+                    const brightness = 0.5 + (1 - star.ly / max.LY) * 0.5;
+                    const glow = ctx.createRadialGradient(sx, sy, 0, sx, sy, 10);
+                    glow.addColorStop(0, `rgba(255, 250, 220, ${brightness * 0.3})`);
+                    glow.addColorStop(1, 'rgba(0, 0, 0, 0)');
+                    ctx.beginPath();
+                    ctx.arc(sx, sy, 10, 0, Math.PI * 2);
+                    ctx.fillStyle = glow;
+                    ctx.fill();
+
+                    ctx.beginPath();
+                    ctx.arc(sx, sy, 2, 0, Math.PI * 2);
+                    ctx.fillStyle = glow;
+                    ctx.fill();
+
+                    if (star.ly < 12) {
+                        ctx.textAlign = 'left';
+                        ctx.font = '9px sans-serif';
+                        ctx.fillStyle = 'rgba(255, 255, 255, 0.35)';
+                        ctx.fillText(star.name, sx + 7, sy + 3);
+                    }
+
+                }
+
+                const sunGlow = ctx.createRadialGradient(cx, cy, 0, cx, cy, 16);
+                sunGlow.addColorStop(0, 'rgba(255, 230, 80, 0.5)');
+                sunGlow.addColorStop(1, 'rgba(0, 0, 0, 0)');
+
+            }
+
+
+
+            
+        </script>
 </body>
 </html>
