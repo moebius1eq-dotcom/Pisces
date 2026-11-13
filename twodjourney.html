@@ -57,6 +57,7 @@
                 if (stageIndex === 3) drawStars();
                 if (stageIndex === 4) drawMilkyWay();
                 if (stageIndex === 5) drawLocalGroup();
+                if (stageIndex === 6) drawVirgoSupercluster();
             });
 
             function drawEarth() {
@@ -413,7 +414,7 @@
 
                     const galaxies = [
                         { name: 'MILKY WAY', x: -0.42, y: 0.12, r: 24, color: '#9bbcff' },
-                        { name: 'ANDROMEDA (M31)', x: 0.38, y: -0.28, r: 29, color: 'ffe0b0' },
+                        { name: 'ANDROMEDA (M31)', x: 0.38, y: -0.28, r: 29, color: '#ffe0b0' },
                         { name: 'TRIANGULUM (M33)', x: 0.60, y: 0.42, r: 13, color: '#b4caff' },
                         { name: 'LARGE MEGALLANIC CLOUD', x: -0.65, y: 0.48, r: 9, color: '#a7caff' },
                         { name: 'SMALL MEGALLANIC CLOUD', x: 0.80, y: 0.67, r: 8, color: '#a7caff' },
@@ -439,11 +440,50 @@
 
                         ctx.fillStyle = glow;
                         ctx.beginPath();
-                        ctx.arc(gx, gy, galaxy.r * 2, Math.PI * 2);
+                        ctx.arc(gx, gy, galaxy.r * 2, 0, Math.PI * 2);
                         ctx.fill();
 
-                        
+                        ctx.save();
+                        ctx.translate(gx, gy);
+                        ctx.rotate(-0.35);
+                        ctx.scale(1, 0.48);
+
+                        ctx.beginPath();
+                        ctx.arc(0, 0, galaxy.r, 0, Math.PI * 2);
+                        ctx.fillStyle = galaxy.color;
+                        ctx.globalAlpha = 0.55;
+                        ctx.fill();
+
+                        ctx.restore();
+
+                        ctx.textAlign = 'center';
+                        ctx.font = '9px sans-serif';
+                        ctx.fillStyle = 'rgba(255, 255, 255, 0.65)';
+                        ctx.fillText(galaxy.name, gx, gy + galaxy.r + 19);
                     }
+
+                    const mwx = cx - 0.42 * scale;
+                    const mwy = cy + 0.12 * scale;
+                    const ax = cx + 0.38 * scale;
+                    const ay = cy - 0.28 * scale;
+
+                    ctx.save();
+                    ctx.setLineDash([3, 7]);
+                    ctx.beginPath();
+                    ctx.moveTo(mwx, mwy);
+                    ctx.lineTo(ax, ay);
+                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.18)';
+                    ctx.stroke();
+                    ctx.restore();
+
+                    ctx.textAlign = 'center';
+                    ctx.font = '12px sans-serif';
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+                    ctx.fillText('THE LOCAL GROUP', cx, cy - scale - 35);
+                    
+                    ctx.font = '10px sans-serif';
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+                    ctx.fillText('~ 10 MILLION LIGHT-YEARS ACROSS', cx, cy - scale - 10);
                 }
         </script> 
 </body>
