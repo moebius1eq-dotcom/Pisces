@@ -56,6 +56,7 @@
                 if (stageIndex === 2) drawSolarSystem();
                 if (stageIndex === 3) drawStars();
                 if (stageIndex === 4) drawMilkyWay();
+                if (stageIndex === 5) drawLocalGroup();
             });
 
             function drawEarth() {
@@ -370,7 +371,7 @@
                             core.addColorStop(0.2, 'rgba(255, 205, 120, 0.65)');
                             core.addColorStop(1, 'rgba(255, 170, 70, 0)');
 
-                            ctx.fillStyle = 'core';
+                            ctx.fillStyle = core;
                             ctx.beginPath();
                             ctx.arc(cx, cy, scale * 0.2, 0, Math.PI * 2);
                             ctx.fill();
@@ -382,7 +383,7 @@
 
                             ctx.beginPath();
                             ctx.arc(sx, sy, 3, 0, Math.PI * 2);
-                            ctx.fillStyle('#ffe070');
+                            ctx.fillStyle = '#ffe070';
                             ctx.fill();
 
                             ctx.strokeStyle = 'rgba(255, 225, 130, 0.5)';
@@ -404,6 +405,46 @@
                             ctx.fillStyle = 'rgba(255, 255, 255, 0.35)';
                             ctx.fillText('~100,000 LIGHT-YEARS ACROSS', cx, cy + scale * 0.85 + 39);
                 }
-        </script>
+
+                function drawLocalGroup() {
+                    const cx = canvas.width / 2;
+                    const cy = canvas.height / 2;
+                    const scale = Math.min(canvas.width, canvas.height) * 0.38;
+
+                    const galaxies = [
+                        { name: 'MILKY WAY', x: -0.42, y: 0.12, r: 24, color: '#9bbcff' },
+                        { name: 'ANDROMEDA (M31)', x: 0.38, y: -0.28, r: 29, color: 'ffe0b0' },
+                        { name: 'TRIANGULUM (M33)', x: 0.60, y: 0.42, r: 13, color: '#b4caff' },
+                        { name: 'LARGE MEGALLANIC CLOUD', x: -0.65, y: 0.48, r: 9, color: '#a7caff' },
+                        { name: 'SMALL MEGALLANIC CLOUD', x: 0.80, y: 0.67, r: 8, color: '#a7caff' },
+                    ];
+
+                    ctx.save();
+                    ctx.setLineDash([4, 9]);
+                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    ctx.ellipse(cx, cy, scale * 1.2, scale * 0.92, 0, 0, Math.PI * 2);
+                    ctx.stroke();
+                    ctx.restore();
+
+                    for (const galaxy of galaxies) {
+                        const gx = cx + galaxy.x * scale;
+                        const gy = cy + galaxy.y * scale;
+
+                        const glow = ctx.createRadialGradient(gx, gy, 0, gx, gy, galaxy.r * 2);
+                        glow.addColorStop(0, galaxy.color);
+                        glow.addColorStop(0.15, 'rgba(170, 190, 255, 0.35)');
+                        glow.addColorStop(1, 'rgba(0, 0, 0, 0)');
+
+                        ctx.fillStyle = glow;
+                        ctx.beginPath();
+                        ctx.arc(gx, gy, galaxy.r * 2, Math.PI * 2);
+                        ctx.fill();
+
+                        
+                    }
+                }
+        </script> 
 </body>
 </html>
