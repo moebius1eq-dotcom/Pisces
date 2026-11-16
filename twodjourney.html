@@ -416,8 +416,8 @@
                         { name: 'MILKY WAY', x: -0.42, y: 0.12, r: 24, color: '#9bbcff' },
                         { name: 'ANDROMEDA (M31)', x: 0.38, y: -0.28, r: 29, color: '#ffe0b0' },
                         { name: 'TRIANGULUM (M33)', x: 0.60, y: 0.42, r: 13, color: '#b4caff' },
-                        { name: 'LARGE MEGALLANIC CLOUD', x: -0.65, y: 0.48, r: 9, color: '#a7caff' },
-                        { name: 'SMALL MEGALLANIC CLOUD', x: 0.80, y: 0.67, r: 8, color: '#a7caff' },
+                        { name: 'LARGE MAGELLANIC CLOUD', x: -0.65, y: 0.48, r: 9, color: '#a7caff' },
+                        { name: 'SMALL MAGELLANIC CLOUD', x: -0.80, y: 0.67, r: 8, color: '#a7caff' },
                     ];
 
                     ctx.save();
@@ -484,6 +484,95 @@
                     ctx.font = '10px sans-serif';
                     ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
                     ctx.fillText('~ 10 MILLION LIGHT-YEARS ACROSS', cx, cy - scale - 10);
+                }
+
+                function drawVirgoSupercluster() {
+                    const cx = canvas.width / 2;
+                    const cy = canvas.height / 2;
+                    const scale = Math.min(canvas.width, canvas.height) * 0.40;
+
+                    const clusters = [
+                        { name: 'VIRGO CLUSTER', x: 0.05, y: -0.08, size: 75, count: 190 },
+                        { name: 'LOCAL GROUP', x: -0.60, y: 0.42, size: 18, count: 12 },
+                        { name: 'FORNAX CLUSTER', x: 0.42, y: 0.63, size: 38, count: 85 },
+                        { name: 'ERIDANUS GROUPS', x: -0.45, y: -0.53, size: 32, count: 65 },
+                        { name: 'CANES VENATICI GROUPS', x: 0.65, y: -0.55, size: 27, count: 50 }
+                    ];
+
+                    ctx.save();
+                    ctx.setLineDash([3, 9]);
+                    ctx.strokeStyle= 'rgba(150, 180, 255, 0.12)';
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    ctx.ellipse(cx, cy, scale * 1.15, scale * 0.9, -0.25, 0, Math.PI * 2);
+                    ctx.stroke();
+                    ctx.restore();
+
+                    for (let c = 0; c < clusters.length; c++) {
+                        const cluster = clusters[c];
+                        const gx = cx + cluster.x * scale;
+                        const gy = cy + cluster.y * scale;
+
+                        const glow = ctx.createRadialGradient(
+                            gx, gy, 0, gx, gy, cluster.size
+                        );
+
+                        glow.addColorStop(0, 'rgba(150, 190, 255, 0.11)');
+                        glow.addColorStop(1, 'rgba(0, 0, 0, 0)');
+
+                        ctx.fillStyle = glow;
+                        ctx.beginPath();
+                        ctx.arc(gx, gy, cluster.size, 0, Math.PI * 2);
+                        ctx.fill();
+
+                        for (let i = 0; i < cluster.count; i++) {
+                            const seed = Math.sin(
+                                (i + 1) * 127.1 + c * 311.7
+                            ) * 43758.5453;
+
+                            const random = seed - Math.floor(seed);
+
+                            const seed2 = Math.sin(
+                                (i + 1) * 269.5 + c * 183.3
+                            ) * 24634.6345;
+
+                            const random2 = seed2 - Math.floor(seed2);
+
+                            const angle = random * Math.PI * 2;
+                            const radius = Math.sqrt(random2) * cluster.size * 0.75;
+
+                            const x = gx + Math.cos(angle) * radius;
+                            const y = gy + Math.sin(angle) * radius * 0.7;
+
+                            ctx.beginPath();
+                            ctx.arc(x, y, 0.5 + random * 1.1, 0, Math.PI * 2);
+                            ctx.fillStyle = `rgba(190, 210, 255, ${0.25 + random2 * 0.65})`;
+                            ctx.fill();
+                        }
+
+                        ctx.textAlign = 'center';
+                        ctx.font = '9px sans-serif';
+                        ctx.fillStyle = 'rgba(255, 255, 255, 0.55)';
+                        ctx.fillText(cluster.name, gx, gy + cluster.size * 0.8 + 16);
+                    }
+
+                    const lx = cx - 0.60 * scale;
+                    const ly = cy + 0.42 * scale;
+
+                    ctx.beginPath();
+                    ctx.arc(lx, ly, 5, 0, Math.PI * 2);
+                    ctx.strokeStyle = 'rgba(255, 225, 130, 0.8)';
+                    ctx.lineWidth = 1;
+                    ctx.stroke();
+
+                    ctx.textAlign = 'center';
+                    ctx.font = '12px sans-serif';
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+                    ctx.fillText('THE VIRGO SUPERCLUSTER', cx, cy - scale - 35);
+
+                    ctx.font = '10px sans-serif';
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+                    ctx.fillText('~110 MILLION LIGHT-YEARS ACROSS', cx, cy - scale - 18);
                 }
         </script> 
 </body>
