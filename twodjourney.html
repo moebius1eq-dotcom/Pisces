@@ -35,22 +35,24 @@
             function resize() {
                 canvas.width  = window.innerWidth;
                 canvas.height = window.innerHeight;
+
+                render();
             }
+
            window.addEventListener('resize', resize);
-           resize();
 
             function getProgress() {
                 const scrollable = wrap.offsetHeight - window.innerHeight;
                 return Math.max(0, Math.min(1, window.scrollY / scrollable));
             }
 
-            window.addEventListener('scroll', () => {
+            
+            function render() {
                 const p = getProgress();
-                const stageIndex    = Math.min(Math.floor(p * 8), 7);
-                const stageProgress = (p * 8) % 1;
+                const stageIndex = Math.min(Math.floor(p * 8), 7);
 
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
-                
+
                 if (stageIndex === 0) drawEarth();
                 if (stageIndex === 1) drawSolar1();
                 if (stageIndex === 2) drawSolarSystem();
@@ -58,7 +60,11 @@
                 if (stageIndex === 4) drawMilkyWay();
                 if (stageIndex === 5) drawLocalGroup();
                 if (stageIndex === 6) drawVirgoSupercluster();
-            });
+                if (stageIndex === 7) drawObservableUniverse();
+            }
+
+            window.addEventListener('scroll', render);
+
 
             function drawEarth() {
                 const cx = canvas.width / 2;
@@ -259,7 +265,7 @@
                     { name: 'PROXIMA CENTAURI', ly: 4.24, angle: -0.6 },
                     { name: 'ALPHA CENTAURI', ly: 4.37, angle: -0.25 },
                     { name: 'BARNARDS STAR', ly: 5.96, angle: 1.8 },
-                    { name: 'WOFL 359', ly: 7.78, angle: 2.5 },
+                    { name: 'WOLF 359', ly: 7.78, angle: 2.5 },
                     { name: 'SIRIUS', ly: 8.60, angle: 0.75 },
                     { name: 'EPSILON ERIDANI', ly: 10.5, angle: -1.9 },
                     { name: 'TAU CETI', ly: 11.9, angle: 2.1 },
@@ -574,6 +580,159 @@
                     ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
                     ctx.fillText('~110 MILLION LIGHT-YEARS ACROSS', cx, cy - scale - 18);
                 }
+
+                function drawObservableUniverse() {
+                    const cx = canvas.width / 2;
+                    const cy = canvas.height / 2;
+                    const scale = Math.min(canvas.width, canvas.height) * 0.39;
+
+                    function random(seed) {
+                        const n = Math.sin(seed * 127.1 + 311.7) * 43758.5453;
+                        return n - Math.floor(n);
+                    }
+
+                    const nodes = [];
+
+                    for (let i = 0; i < 48; i++) {
+                        const angle = random(i * 3 + 1) * Math.PI * 2;
+                        const radius = Math.sqrt(random(i * 3 + 2)) * scale * 0.92;
+
+                        nodes.push({
+                            x: cx + Math.cos(angle) * radius,
+                            y: cy + Math.sin(angle) * radius,
+                            size: 1.5 + random(i * 3 + 3) * 3
+                        });
+                    }
+
+                    ctx.save();
+                    ctx.setLineDash([2, 7]);
+                    ctx.beginPath();
+                    ctx.arc(cx, cy, scale, 0, Math.PI * 2);
+                    ctx.strokeStyle = 'rgba(160, 190, 255, 0.16)';
+                    ctx.lineWidth = 1;
+                    ctx.stroke();
+                    ctx.restore();
+
+                    const maxDistance = scale * 0.40;
+
+                    for (let i = 0; i < nodes.length; i++) {
+                        for (let j = i + 1; j < nodes.length; j++) {
+                            const a = nodes[i];
+                            const b = nodes[j];
+
+                            const dx = a.x - b.x;
+                            const dy = a.y - b.y;
+                            const distance = Math.sqrt(dx * dx + dy * dy);
+
+                            if (distance < maxDistance) {
+                                const alpha = (1 - distance / maxDistance) * 0.18;
+
+                                ctx.beginPath();
+                                ctx.moveTo(a.x, a.y);
+                                ctx.lineTo(b.x, b.y);
+                                ctx.strokeStyle = `rgba(120, 170, 255, ${alpha})`;
+                                ctx.lineWidth = 0.7;
+                                ctx.stroke();
+                            }
+                        }
+                    }
+
+                    for (let i = 0; i < nodes.length; i++) {
+                        const a = nodes[i];
+
+                        let nearest = null;
+                        let nearestDistance = Infinity;
+
+                        for (let j = 0; j < nodes.length; j++) {
+                            if (i === j) continue;
+
+                            const b = nodes[j];
+                            const distance = Math.hypot(a.x - b.x, a.y - b.y);
+
+                            if (distance < nearestDistance) {
+                                nearestDistance = distance;
+                                nearest = b;
+                            }
+                        }
+
+                        if (!nearest) continue;
+
+                        for (let k = 0; k < 45; k++) {
+                            const t = random(i * 100 + k + 1);
+
+                            const x = a.x + (nearest.x - a.x) * t;
+                            const y = a.y + (nearest.y - a.y) * t;
+
+                            const spread = 4 + random(i * 200 + k) * 10;
+                            const offsetX = (random(i * 300 + k) - 0.5) * spread;
+                            const offsetY = (random(i * 400 + k) - 0.5) * spread;
+
+                            ctx.beginPath();
+                            ctx.arc(
+                                x + offsetX,
+                                y + offsetY,
+                                0.3 + random(i * 500 + k) * 0.7,
+                                0,
+                                Math.PI * 2
+                            );
+
+                            ctx.fillStyle = 'rgba(170, 205, 255, 0.35)';
+                            ctx.fill();
+                        }
+                    }
+
+                    for (const node of nodes) {
+                        const glow = ctx.createRadialGradient(
+                            node.x, node.y, 0,
+                            node.x, node.y, node.size * 5
+                        );
+
+                        glow.addColorStop(0, 'rgba(210, 230, 255, 0.65)');
+                        glow.addColorStop(0.3, 'rgba(120, 170, 255, 0.18)');
+                        glow.addColorStop(1, 'rgba(0, 0, 0, 0)');
+
+                        ctx.beginPath();
+                        ctx.arc(node.x, node.y, node.size * 5, 0, Math.PI * 2);
+                        ctx.fillStyle = glow;
+                        ctx.fill();
+                    }
+
+                    ctx.beginPath();
+                    ctx.arc(cx, cy, 3, 0, Math.PI * 2);
+                    ctx.fillStyle = '#ffe6a0';
+                    ctx.fill();
+
+                    ctx.textAlign = 'left';
+                    ctx.font = '9px sans-serif';
+                    ctx.fillStyle = 'rgba(255, 230, 160, 0.7)';
+                    ctx.fillText('OBSERVER', cx + 9, cy - 8);
+
+                    ctx.textAlign = 'center';
+                    ctx.font = '12px sans-serif';
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
+                    ctx.fillText(
+                        'THE OBSERVABLE UNIVERSE',
+                        cx, 
+                        cy - scale - 35
+                    );
+
+                    ctx.font = '10px sans-serif';
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.45)';
+                    ctx.fillText(
+                        '~92 BILLION LIGHT-YEARS ACROSS',
+                        cx, 
+                        cy - scale - 18
+                    );
+
+                    ctx.font = '9px sans-serif';
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.35)';
+                    ctx.fillText(
+                        'GALAXY FILAMENTS · CLUSTERS · COSMIC VOIDS',
+                        cx,
+                        cy + scale + 22
+                    );
+                }
+                resize();
         </script> 
 </body>
 </html>
