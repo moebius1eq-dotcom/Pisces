@@ -18,13 +18,26 @@
         }
     </style>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive Journey | Pisces</title>
+    <title>2D Journey | Pisces</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="journey-wrap">
         <div class="journey-sticky">
             <canvas id="c"></canvas>
+            <div class="cosmic-hud">
+                <div class="hud-top">
+                    <span>ASTRO JOURNEY</span>
+                    <span id="hud-count">01 / 08</span>
+                </div>
+
+                <h2 id="hud-title">Earth & Moon</h2>
+                <p id="hud-distance">384,400 km apart</p>
+
+                <div class="hud-progress">
+                    <div id="hud-progress-fill"></div>
+                </div>
+            </div>
         </div>
     </div>
     <script>
@@ -49,22 +62,89 @@
             
             function render() {
                 const p = getProgress();
-                const stageIndex = Math.min(Math.floor(p * 8), 7);
+
+                const totalStages = 8;
+                const position = p * (totalStages - 1);
+
+                const stageIndex = Math.min(
+                    Math.floor(position),
+                    totalStages - 1
+                );
+
+                const nextStage = Math.min(
+                    stageIndex + 1,
+                    totalStages - 1
+                );
+
+                const progress = position - stageIndex;
+                const transitionStart = 0.50;
+
+                let t = Math.max(
+                    0,
+                    Math.min(
+                        1, 
+                        (progress - transitionStart) / (1 - transitionStart)
+                    )
+                );
+
+                t = t * t * (3 - 2 * t);
 
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.save();
+                ctx.globalAlpha = 1 - t;
 
-                if (stageIndex === 0) drawEarth();
-                if (stageIndex === 1) drawSolar1();
-                if (stageIndex === 2) drawSolarSystem();
-                if (stageIndex === 3) drawStars();
-                if (stageIndex === 4) drawMilkyWay();
-                if (stageIndex === 5) drawLocalGroup();
-                if (stageIndex === 6) drawVirgoSupercluster();
-                if (stageIndex === 7) drawObservableUniverse();
+                const outgoingScale = 1 - t * 0.35;
+
+                ctx.translate(canvas.width / 2, canvas.height / 2);
+                ctx.scale(outgoingScale, outgoingScale);
+                ctx.translate(-canvas.width / 2, -canvas.height / 2);
+
+                drawStage(stageIndex);
+
+                ctx.restore();
+
+                if (t > 0 && nextStage !== stageIndex) {
+                    ctx.save();
+                    ctx.globalAlpha = t;
+
+                    const incomingScale = 1.25 - t * 0.25;
+                    
+                    ctx.translate(canvas.width / 2, canvas.height / 2);
+                    ctx.scale(incomingScale, incomingScale);
+                    ctx.translate(-canvas.width / 2, -canvas.height / 2);
+
+                    drawStage(nextStage);
+
+                    ctx.restore();
+                }
+
             }
 
-            window.addEventListener('scroll', render);
+            function drawStage(index) {
+                if (index === 0) drawEarth();
+                if (index === 1) drawSolar1();
+                if (index === 2) drawSolarSystem();
+                if (index === 3) drawStars();
+                if (index === 4) drawMilkyWay();
+                if (index === 5) drawLocalGroup();
+                if (index === 6) drawVirgoSupercluster();
+                if (index === 7) drawObservableUniverse();
+            }
 
+            let renderPending = false;
+
+            function requestRender() {
+                if (renderPending) return;
+
+                renderPending = true;
+
+                requestAnimationFrame(() => {
+                    render();
+                    renderPending = false;
+                });
+            }
+
+            window.addEventListener('scroll', requestRender);
 
             function drawEarth() {
                 const cx = canvas.width / 2;
