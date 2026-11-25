@@ -98,6 +98,40 @@
                 display: none;
             }
         }
+
+        #object-tooltip {
+            position: absolute;
+            z-index: 20;
+            width: 240px;
+            padding: 18px;
+            background: rgba(12, 18, 28, 0.88);
+            border: 1px solid rgba(180, 210, 255, 0.18);
+            border-radius: 8px;
+            backdrop-filter: blur(12px);
+            font-family: Arial, sans-serif;
+            color: white;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        #tooltip-type {
+            font-size: 9px;
+            letter-spacing: 2px;
+            color: #9cbce5;
+        }
+
+        #tooltip-name {
+            font-size: 20px;
+            font-weight: 400;
+            margin: 8px, 0;
+        }
+
+        #tooltip-description {
+            font-size: 12px;
+            line-height: 1.7;
+            color: rgba(255, 255, 255, 0.65);
+        }
     </style>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>2D Journey | Pisces</title>
@@ -107,6 +141,11 @@
     <div class="journey-wrap">
         <div class="journey-sticky">
             <canvas id="c"></canvas>
+            <div id="object-tooltip">
+                <span id="tooltip-type"></span>
+                <h3 id="tooltip-name"></h3>
+                <p id="tooltip-description"></p>
+            </div>
             <div class="cosmic-hud">
                 <div class="hud-top">
                     <span>ASTRO JOURNEY</span>
@@ -132,8 +171,15 @@
             const canvas = document.getElementById('c');
             const ctx = canvas.getContext('2d');
             const wrap = document.querySelector('.journey-wrap');
-
+            const interactiveObjects = [];
+            const tooltip = document.getElementById('object-tooltip');
+            const tooltipType = document.getElementById('tooltip-type');
+            const tooltipName = document.getElementById('tooltip-name');
+            const tooltipDescription = document.getElementById(
+                'tooltip-description'
+            );  
             const backgroundStars = [];
+
             for (let i = 0; i < 350; i++) {
                 backgroundStars.push({
                     x: Math.random(),
@@ -156,6 +202,56 @@
             function getProgress() {
                 const scrollable = wrap.offsetHeight - window.innerHeight;
                 return Math.max(0, Math.min(1, window.scrollY / scrollable));
+            }
+
+            function registerObject(x, y, radius, type, name, description) {
+                interactiveObjects.push({
+                    x,
+                    y,
+                    radius,
+                    type,
+                    name, 
+                    description
+                });
+            }
+
+            function drawBackground(progress) {
+                ctx.save();
+
+                ctx.fillStyle = '#000';
+                ctx.fillRect(
+                    0, 0,
+                    canvas.width,
+                    canvas.height
+                );
+
+                for (const star of backgroundStars) {
+                    const offset =
+                        progress * star.depth * 120;
+
+                    const x = star.x * canvas.width;
+
+                    const y = 
+                        (star.y * canvas.height + offset)
+                        % canvas.height;
+
+                    ctx.beginPath();
+
+                    ctx.arc(
+                        x,
+                        y,
+                        star.radius,
+                        0,
+                        Math.PI * 2
+                    );
+
+                    ctx.fillStyle = 
+                        `rgba(190, 210, 255, ${star.opacity})`;
+                    
+                    ctx.fill();
+                }
+
+                ctx.restore();
             }
             
             function getCameraAnchor(index) {
@@ -219,6 +315,10 @@
             function render() {
                 const p = getProgress();
 
+                interactiveObjects.length = 0;
+                tooltip.style.opacity = '0';
+                canvas.style.cursor = 'default';
+
                 const totalStages = 8;
                 const position = p * totalStages;
 
@@ -255,6 +355,7 @@
                 updateHUD(displayedStage, p);
 
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
+                drawBackground(p);
                 ctx.save();
                 ctx.globalAlpha = 1 - t;
 
@@ -383,6 +484,43 @@
 
                 const ex = cx - gap * 0.35;
                 const mx = cx + gap * 0.65;
+
+                registerObject(
+                    ex, 
+                    cy,
+                    eR,
+                    'TERRESTRIAL PLANET',
+                    'Earth',
+                    'Diameter: 12,742 km. Orbital period: approximately 365.25 days.'
+                );
+
+                registerObject(
+                    mx,
+                    cy,
+                    mR,
+                    'NATURAL SATELLITE',
+                    'Moon',
+                    'Diameter: 3,474 km. Average distance from Earth: 384,400 km.'
+                );
+
+                canvas.addEventListener('mousemove', (event) => {
+                    const rect = canvas.getBoundingClientRect();
+
+                    const x = event.clientX - rect.left;
+                    const y = event.clientY - rect.top;
+
+                    const position = getProgress() * 8;
+                    
+                    const stageIndex = Math.min(
+                        Math.floor(position),
+                        7
+                    );
+
+                    const progress = position - stageIndex;
+
+                    tooltip.style.opacity = '0';
+                    tooltip.style.cursor = 'default';
+                })
 
                 const eGlow= ctx.createRadialGradient(ex, cy, eR * 0.8, ex, cy, eR * 1.6);
                 eGlow.addColorStop(0, 'rgba(70, 150, 255, 0.15)');
