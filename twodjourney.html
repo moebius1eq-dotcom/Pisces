@@ -68,6 +68,36 @@
                 width: min(280px, calc(100% - 48px));
             }
         }
+
+        .cosmic-context {
+            position: absolute;
+            bottom: 48px;
+            right: 48px;
+            width: 280px;
+            z-index: 10;
+            pointer-events: none;
+            font-family: Arial, sans-serif;
+        }
+
+        .context-label {
+            display: block;
+            font-size: 10px;
+            letter-spacing: 2px;
+            color: rgba(255, 255, 255, 0.4);
+            margin-bottom: 12px;
+        }
+
+        #context-description {
+            font-size: 13px;
+            line-height: 1.8;
+            color: rgba(255, 255, 255, 0.65);
+        }
+
+        @media (max-width: 700px) {
+            .cosmic-context {
+                display: none;
+            }
+        }
     </style>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>2D Journey | Pisces</title>
@@ -89,6 +119,12 @@
                 <div class="hud-progress">
                     <div id="hud-progress-fill"></div>
                 </div>
+            </div>
+            <div class="cosmic-context">
+                <span class="context-label">
+                    UNDERSTANDING THE UNIVERSE
+                </span>
+                <p id="context-description"></p>
             </div>
         </div>
     </div>
@@ -199,6 +235,20 @@
                 ['Observable Universe', '~92 billion light-years across']
             ];
 
+            const stageDescriptions = [
+                'The Moon is our closest celestial neighbor. Light takes approximately 1.28 seconds to travel between Earth and the Moon.',
+                'Earth orbits the Sun at an average distance of approximately 149.6 million kilometers. Sunlight takes about eight minutes to reach us.',
+                'Eight planets orbit our Sun. Beyond Neptune lie the Kuiper Belt and the distant regions of our Solar System.',
+                'Even the closest star beyond our Sun, Proxima Centauri, lies more than four light-years away.',
+                'Our Solar System resides within a barred spiral galaxy containing hundreds of billions of stars.',
+                'The Milky Way belongs to the Local Group, a gravitationally associated collection of galaxies that includes Andromeda and Triangulum.',
+                'The Virgo Supercluster encompasses numerous galaxy groups and clusters, including our own Local Group.',
+                'The observable universe contains vast networks of galaxies separated by enormous cosmic voids. Its horizon represents the limit of what we can currently observe.'
+            ];
+
+            const contextDescription =
+                document.getElementById('context-description');
+
             const hudTitle = document.getElementById('hud-title');
             const hudDistance = document.getElementById('hud-distance');
             const hudCount = document.getElementById('hud-count');
@@ -207,6 +257,9 @@
             function updateHUD(index, progress) {
                 hudTitle.textContent = stageInfo[index][0];
                 hudDistance.textContent = stageInfo[index][1];
+
+                contextDescription.textContent = 
+                    stageDescriptions[index];
 
                 hudCount.textContent =
                     String(index + 1).padStart(2, '0') + ' / 08';
@@ -621,7 +674,7 @@
                         ctx.beginPath();
                         ctx.arc(0, 0, galaxy.r, 0, Math.PI * 2);
                         ctx.fillStyle = galaxy.color;
-                        ctx.globalAlpha = 0.55;
+                        ctx.globalAlpha *= 0.55;
                         ctx.fill();
 
                         ctx.restore();
