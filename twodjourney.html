@@ -133,6 +133,17 @@
             const ctx = canvas.getContext('2d');
             const wrap = document.querySelector('.journey-wrap');
 
+            const backgroundStars = [];
+            for (let i = 0; i < 350; i++) {
+                backgroundStars.push({
+                    x: Math.random(),
+                    y: Math.random(),
+                    radius: 0.3 + Math.random() * 0.9,
+                    opacity: 0.1 + Math.random() * 0.4,
+                    depth: Math.random()
+                });
+            }
+
             function resize() {
                 canvas.width  = window.innerWidth;
                 canvas.height = window.innerHeight;
@@ -146,13 +157,70 @@
                 const scrollable = wrap.offsetHeight - window.innerHeight;
                 return Math.max(0, Math.min(1, window.scrollY / scrollable));
             }
+            
+            function getCameraAnchor(index) {
+                const cx = canvas.width / 2;
+                const cy = canvas.height / 2;
+                const size = Math.min(
+                    canvas.width,
+                    canvas.height
+                );
 
+                switch (index) {
+                    case 1:
+                        return {
+                            x: cx,
+                            y: cy - size * 0.31
+                        };
+
+                        case 2:
+                            const orbitR = 
+                                (Math.log(1 / 0.3) / 
+                                Math.log(32 / 0.3)) *
+                                size * 0.44;
+
+                            return {
+                                x: cx + Math.cos(2.2) * orbitR,
+                                y: cy + Math.sin(2.2) * orbitR
+                            };
+
+                        case 4:
+                            return {
+                                x: cx + Math.cos(-0.6) *
+                                    size * 0.42 * 0.52,
+                                y: cy + Math.sin(-0.6) *
+                                    size * 0.42 * 0.52 * 0.78
+                            };
+
+                        case 5:
+                            return {
+                                x: cx - size * 0.38 * 0.42,
+                                y: cy + size * 0.38 * 0.12
+                            };
+
+                        case 6:
+                            return {
+                                x: cx - size * 0.40 * 0.60,
+                                y: cy + size * 0.40 * 0.42
+                            };
+
+                        default:
+                            return {
+                                x: cx,
+                                y: cy
+                            };
+                }
+            }
+
+            function lerp(start, end, t) {
+                return start + (end - start) * t;
+            }
             
             function render() {
                 const p = getProgress();
 
                 const totalStages = 8;
-                const position = p * (totalStages - 1);
+                const position = p * totalStages;
 
                 const stageIndex = Math.min(
                     Math.floor(position),
@@ -174,6 +242,10 @@
                         (progress - transitionStart) / (1 - transitionStart)
                     )
                 );
+
+                if (stageIndex === totalStages - 1) {
+                    t = 0;
+                }
 
                 t = t * t * (3 - 2 * t);
 
@@ -200,11 +272,30 @@
                     ctx.save();
                     ctx.globalAlpha = t;
 
-                    const incomingScale = 1.25 - t * 0.25;
-                    
-                    ctx.translate(canvas.width / 2, canvas.height / 2);
+                    const incomingScale = 2.5 - t * 1.5;
+
+                    const anchor = getCameraAnchor(nextStage);
+
+                    const cameraX = lerp(
+                        anchor.x,
+                        canvas.width / 2,
+                        t
+                    );
+
+                    const cameraY = lerp(
+                        anchor.y,
+                        canvas.height / 2,
+                        t
+                    );
+
+                    ctx.translate(
+                        canvas.width / 2,
+                        canvas.height / 2
+                    );
+
                     ctx.scale(incomingScale, incomingScale);
-                    ctx.translate(-canvas.width / 2, -canvas.height / 2);
+
+                    ctx.translate(-cameraX, -cameraY);
 
                     drawStage(nextStage);
 
